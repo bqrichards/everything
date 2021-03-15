@@ -1,0 +1,8 @@
+click==7.1.2
+exif==1.2.0
+Flask==1.1.2
+itsdangerous==1.1.0
+Jinja2==2.11.3
+MarkupSafe==1.1.1
+plum-py==0.3.1
+Werkzeug==1.0.1
