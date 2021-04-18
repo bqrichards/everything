@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from db import metadata, Media
 from flask_sqlalchemy import SQLAlchemy
 import threading
@@ -6,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from scan import scan
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/everything.db'
 
 db = SQLAlchemy(metadata=metadata)
