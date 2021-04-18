@@ -8,7 +8,7 @@ export const LibraryPage = () => {
 	const [media, setMedia] = useState<Media[]>([])
 
 	useEffect(() => {
-		api.get<Media[]>('http://127.0.0.1:5000/api/all')
+		api.get<Media[]>('api/all')
 			.then(response => response.data)
 			.then(setMedia)
 			.catch(e => {
