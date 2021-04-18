@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { LibraryItem } from './components/LibraryItem'
 import { Media } from './models/Media'
 import { api } from './api'
+import { Link } from 'react-router-dom'
 import './LibraryPage.css'
 
 export const LibraryPage = () => {
@@ -20,7 +21,13 @@ export const LibraryPage = () => {
 		<div id='library-page-container'>
 			<h1>Library</h1>
 			<div className='grid-container'>
-				{media.map(mediaItem => <LibraryItem key={String(mediaItem.id)} media={mediaItem} />)}
+				{media.map(mediaItem => (
+					<Link to={`/media/${mediaItem.id}`}>
+						<LibraryItem
+							key={String(mediaItem.id)}
+							media={mediaItem} />
+					</Link>
+				))}
 			</div>
 		</div>
 	)

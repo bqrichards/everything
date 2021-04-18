@@ -1,16 +1,16 @@
 import './App.css'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { LibraryPage } from './LibraryPage'
+import { ParentMediaPage } from './ParentMediaPage'
 
 function App() {
 	return (
-		<Router>
+		<BrowserRouter>
 			<Switch>
-				<Route path="/">
-					<LibraryPage />
-				</Route>
+				<Route exact path='/' component={LibraryPage} />
+				<Route path='/media' component={ParentMediaPage} />
 			</Switch>
-		</Router>
+		</BrowserRouter>
 	)
 }
 
