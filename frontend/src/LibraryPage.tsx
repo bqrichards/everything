@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { LibraryItem } from './components/LibraryItem'
 import { Media } from './models/Media'
+import { api } from './api'
 import './LibraryPage.css'
 
 export const LibraryPage = () => {
 	const [media, setMedia] = useState<Media[]>([])
 
 	useEffect(() => {
-		fetch('http://127.0.0.1:5000/api/all')
-			.then(response => response.json())
+		api.get<Media[]>('http://127.0.0.1:5000/api/all')
+			.then(response => response.data)
 			.then(setMedia)
 			.catch(e => {
 				console.warn(e)
