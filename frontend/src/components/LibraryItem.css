@@ -1,5 +1,11 @@
 .LibraryItem {
 	border: 1px dashed black;
-	width: 64px;
-	height: 64px;
+	width: 96px;
+	height: 96px;
+}
+
+.LibraryItemImage {
+	width: 96px;
+	height: 96px;
+	object-fit: contain;
 }
