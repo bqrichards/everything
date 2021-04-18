@@ -19,7 +19,7 @@ with app.app_context():
 def get_all_media():
 	return db.session.query(Media).all()
 
-def get_media(media_id):
+def get_media_by_id(media_id):
 	return db.session.query(Media).get(media_id)
 
 @dataclass
@@ -43,11 +43,27 @@ def make_http_error(detail: str, type: str, title: str, status: int):
 
 @app.route('/api/thumbnail/<media_id>')
 def get_thumbnail(media_id):
-	media = get_media(media_id)
+	media = get_media_by_id(media_id)
 	if media is None:
 		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
 
 	return send_file(media.filepath, mimetype=mime_from_ext(media.filepath))
+
+@app.route('/api/media/visual/<media_id>')
+def get_media_visual(media_id):
+	media = get_media_by_id(media_id)
+	if media is None:
+		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
+
+	return send_file(media.filepath, mimetype=mime_from_ext(media.filepath))
+
+@app.route('/api/media/<media_id>')
+def get_media(media_id):
+	media = get_media_by_id(media_id)
+	if media is None:
+		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
+
+	return jsonify(media)
 
 @app.route('/api/all')
 def all():

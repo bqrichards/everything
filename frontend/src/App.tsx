@@ -6,10 +6,12 @@ import { ParentMediaPage } from './ParentMediaPage'
 function App() {
 	return (
 		<BrowserRouter>
-			<Switch>
-				<Route exact path='/' component={LibraryPage} />
-				<Route path='/media' component={ParentMediaPage} />
-			</Switch>
+			<div id='app'>
+				<Switch>
+					<Route exact path='/' component={LibraryPage} />
+					<Route path='/media' component={ParentMediaPage} />
+				</Switch>
+			</div>
 		</BrowserRouter>
 	)
 }
