@@ -9,6 +9,16 @@ image_extensions = ['.jpg', '.png', '.jpeg']
 video_extensions = ['.mp4', '.mov']
 allowed_extensions = image_extensions + video_extensions
 
+def mime_from_ext(filepath):
+	_, ext = os.path.splitext(filepath)
+	return {
+		'.jpg': 'image/jpeg',
+		'.jpeg': 'image/jpeg',
+		'.png': 'image/png',
+		'.mp4': 'video/mp4',
+		'.mov': 'application/octet-stream'
+	}[ext.lower()]
+
 media_directory = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop', 'data')
 
 def _is_image(filepath: str) -> bool:
