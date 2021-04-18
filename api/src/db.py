@@ -1,0 +1,22 @@
+from dataclasses import dataclass
+from sqlalchemy import MetaData, Column, Integer, Text, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+
+metadata = MetaData()
+Base = declarative_base(metadata=metadata)
+
+@dataclass
+class Media(Base):
+	__tablename__ = 'media'
+
+	id: int
+	filepath: str
+	title: str
+	comment: str
+	date: str
+
+	id = Column(Integer, primary_key=True)
+	filepath = Column(Text, unique=True, nullable=False)
+	title = Column(Text, nullable=False)
+	comment = Column(Text, nullable=False)
+	date = Column(DateTime)
