@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, send_file
+from datetime import datetime, tzinfo
+from typing import List, Union
+from flask import Flask, jsonify, send_file, request
 from flask_cors import CORS
 from dataclasses import dataclass
 from db import metadata, Media
@@ -6,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 import threading
 from sqlalchemy.exc import IntegrityError
 from scan import mime_from_ext, scan
+import dateutil.parser
+import pytz
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +25,46 @@ def get_all_media():
 
 def get_media_by_id(media_id):
 	return db.session.query(Media).get(media_id)
+
+def decode_media(media: Media):
+	new_media = {
+		'id': media.id,
+		'title': media.title,
+		'comment': media.comment,
+		'date': None if media.date is None else media.date.replace(tzinfo=pytz.UTC).isoformat()
+	}
+	
+	return new_media
+
+def jsonify_media(media: Union[Media, List[Media]]):
+	if media is None:
+		raise ValueError('media cannot be None')
+
+	if type(media) == list:
+		return jsonify([decode_media(m) for m in media])
+	else:
+		return jsonify(decode_media(media))
+	
+
+def update_media(media_id, new_media):
+	media = get_media_by_id(media_id)
+	if media is None:
+		return None
+
+	media.title = new_media['title']
+	media.comment = new_media['comment']
+	
+	utc_date = None
+	if new_media['date'] is not None:
+		utc_date = dateutil.parser.parse(new_media['date'])
+
+	media.date = utc_date
+
+	with app.app_context():
+		db.session.commit()
+
+	return get_media_by_id(media_id)
+
 
 @dataclass
 class HttpError:
@@ -38,14 +82,14 @@ class HttpError:
 	""" HTTP status code """
 	status: int
 
-def make_http_error(detail: str, type: str, title: str, status: int):
-	return jsonify(HttpError(detail, type, title, status)), status
+def make_http_error(title: str, detail: str, status: int):
+	return jsonify(HttpError(detail, 'about:blank', title, status)), status
 
 @app.route('/api/thumbnail/<media_id>')
 def get_thumbnail(media_id):
 	media = get_media_by_id(media_id)
 	if media is None:
-		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
+		return make_http_error('Missing Title', 'Media does not exist', 400)
 
 	return send_file(media.filepath, mimetype=mime_from_ext(media.filepath))
 
@@ -53,7 +97,7 @@ def get_thumbnail(media_id):
 def get_media_visual(media_id):
 	media = get_media_by_id(media_id)
 	if media is None:
-		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
+		return make_http_error('Missing Title', 'Media does not exist', 400)
 
 	return send_file(media.filepath, mimetype=mime_from_ext(media.filepath))
 
@@ -61,14 +105,22 @@ def get_media_visual(media_id):
 def get_media(media_id):
 	media = get_media_by_id(media_id)
 	if media is None:
-		return make_http_error('Media does not exist', 'about:blank', 'Missing Title', 400)
+		return make_http_error('Missing Title', 'Media does not exist', 400)
 
-	return jsonify(media)
+	return jsonify_media(media)
+
+@app.route('/api/media/<media_id>/edit', methods=['PATCH'])
+def edit_media(media_id):
+	new_media = update_media(media_id, request.json)
+	if new_media == None:
+		return make_http_error('Invalid media', 'Invalid media', 400)
+
+	return jsonify_media(new_media), 200
 
 @app.route('/api/all')
 def all():
 	all_media = get_all_media()
-	return jsonify(all_media)
+	return jsonify_media(all_media)
 
 def scan_and_commit():
 	""" Get all media items from the scanner and commit them to DB """

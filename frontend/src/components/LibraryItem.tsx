@@ -11,7 +11,7 @@ export const LibraryItem: FC<LibraryItemProps> = props => (
 	<div className='LibraryItem grid-item'>
 		<img
 			className='LibraryItemImage'
-			src={urlFromEndpoint(`api/thumbnail/${props.media.id}`)}
+			src={urlFromEndpoint(`thumbnail/${props.media.id}`)}
 			alt={props.media.title} />
 	</div>
 )
