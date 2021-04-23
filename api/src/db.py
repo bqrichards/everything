@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from sqlalchemy import MetaData, Column, Integer, Text, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -13,7 +14,7 @@ class Media(Base):
 	filepath: str
 	title: str
 	comment: str
-	date: str
+	date: datetime
 
 	id = Column(Integer, primary_key=True)
 	filepath = Column(Text, unique=True, nullable=False)

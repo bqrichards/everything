@@ -2,8 +2,10 @@ import './MediaPage.css'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import { api, urlFromEndpoint } from './api'
-import { MediaMetadataPanel } from './components/MediaMetadataPanel'
-import { mediaIsEqual } from './utilities/MediaUtilities'
+import { MediaChangedFunction, MediaMetadataPanel } from './components/MediaMetadataPanel'
+import { initMedia, mediaIsEqual } from './utilities/MediaUtilities'
+import { Media } from './models/Media'
+import moment from 'moment'
 
 interface MediaPageParams {
 	mediaId: string
@@ -12,16 +14,19 @@ interface MediaPageParams {
 export const MediaPage = () => {
 	const { mediaId } = useParams<MediaPageParams>()
 
-	const [media, setMedia] = useState()
-	const [pendingMedia, setPendingMedia] = useState()
+	const [media, setMedia] = useState<Media>()
+	const [pendingMedia, setPendingMedia] = useState<Media>()
 
-	const differs = useMemo(() => mediaIsEqual(media, pendingMedia), [media, pendingMedia])
+	const differs = useMemo(() => !mediaIsEqual(media, pendingMedia), [media, pendingMedia])
 
 	useEffect(() => {
 		api
 			.get(`media/${mediaId}`)
 			.then(response => response.data)
 			.then(media => {
+				// Convert media date to localtime
+				media = initMedia(media)
+				
 				setMedia(media)
 				setPendingMedia(media)
 			})
@@ -29,12 +34,31 @@ export const MediaPage = () => {
 	}, [mediaId])
 
 	const save = useCallback(() => {
+		console.log(pendingMedia)
 		api
 			.patch(`media/${mediaId}/edit`, pendingMedia)
 			.then(response => response.data)
-			.then(console.log)
+			.then(media => {
+				media = initMedia(media)
+				setMedia(media)
+				setPendingMedia(media)
+			})
 			.catch(console.warn)
 	}, [pendingMedia, mediaId])
+
+	const mediaChanged: MediaChangedFunction = useCallback((key, value) => {
+		setPendingMedia(oldMedia => {
+			const newMedia = {...oldMedia}
+			if (key === 'date') {
+				// Convert local time to UTC
+				newMedia[key] = moment(value).toISOString()
+			} else {
+				newMedia[key] = value
+			}
+
+			return newMedia
+		})
+	}, [])
 
 	return (
 		<div id='media-page-container'>
@@ -45,7 +69,11 @@ export const MediaPage = () => {
 					alt={media?.title || 'Untitled Media'} />
 			</div>
 			<div id='media-page-edit-panel'>
-				<MediaMetadataPanel media={media} showSaveButton={differs} save={save} />
+				<MediaMetadataPanel
+					media={media}
+					mediaChanged={mediaChanged}
+					showSaveButton={differs}
+					save={save} />
 			</div>
 		</div>
 	)
