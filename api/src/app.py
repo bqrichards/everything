@@ -6,10 +6,13 @@ from db import ModificationRecord, metadata, Media
 from flask_sqlalchemy import SQLAlchemy
 import threading
 from sqlalchemy.exc import IntegrityError
+from flush_exif import flush_exif
 from scan import mime_from_ext, scan
 import dateutil.parser
 import logging
 import pytz
+
+logging.getLogger().setLevel(logging.INFO)
 
 app = Flask(__name__)
 CORS(app)

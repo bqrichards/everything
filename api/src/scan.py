@@ -2,7 +2,8 @@ import os
 from collections import namedtuple
 from typing import List
 from exif import Image
-from metadata import Metadata
+from metadata import Metadata, EXIF_DATE_FORMAT
+from datetime import datetime
 from db import Media
 
 image_extensions = ['.jpg', '.png', '.jpeg']
@@ -61,7 +62,8 @@ def scan() -> List[Media]:
 			if valid[1] is not None:
 				mediaItem.title = valid[1].title
 				mediaItem.comment = valid[1].comment
-				mediaItem.date = valid[1].date
+				if valid[1].date:
+					mediaItem.date = datetime.strptime(valid[1].date, EXIF_DATE_FORMAT)
 			
 			retval.append(mediaItem)
 	
