@@ -6,7 +6,7 @@ from db import ModificationRecord, metadata, Media
 from flask_sqlalchemy import SQLAlchemy
 import threading
 from sqlalchemy.exc import IntegrityError
-from flush_exif import flush_exif
+from flush_media import flush_media
 from scan import mime_from_ext, scan
 import dateutil.parser
 import logging
@@ -108,6 +108,13 @@ class HttpError:
 def make_http_error(title: str, detail: str, status: int):
 	return jsonify(HttpError(detail, 'about:blank', title, status)), status
 
+
+@app.route('/api/flush')
+def flush():
+	with app.app_context():
+		flush_media(db, complete=True)
+
+	return jsonify(True)
 
 @app.route('/api/thumbnail/<media_id>')
 def get_thumbnail(media_id):
