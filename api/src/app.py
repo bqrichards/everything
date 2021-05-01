@@ -45,8 +45,6 @@ def get_media_by_id(media_id):
 def decode_media(media: Media):
 	new_media = {
 		'id': media.id,
-		'title': media.title,
-		'comment': media.comment,
 		'date': None if media.date is None else media.date.replace(tzinfo=pytz.UTC).isoformat()
 	}
 	
@@ -64,9 +62,6 @@ def jsonify_media(media: Union[Media, List[Media]]):
 
 
 def update_media_with_json(media: Media, new_media: dict):
-	media.title = new_media['title']
-	media.comment = new_media['comment']
-	
 	utc_date = None
 	if new_media['date'] is not None:
 		utc_date = dateutil.parser.parse(new_media['date'])
@@ -159,7 +154,7 @@ def all():
 
 
 def scan_and_commit():
-	""" Get all media items from the scanner and commit them to DB """
+	"""Get all media items from the scanner and commit them to DB"""
 	media_items = scan()
 
 	with app.app_context():

@@ -25,17 +25,6 @@ export const MediaMetadataPanel: FC<MediaMetadataPanelProps> = props => (
 				</div>
 			</Link>
 		</div>
-		<h2>Title</h2>
-		<input
-			type='text'
-			defaultValue={props.media?.title}
-			onChange={e => props.mediaChanged('title', e.target.value)} />
-		<h2>Comment</h2>
-		<textarea
-			rows={3}
-			cols={30}
-			defaultValue={props.media?.comment}
-			onChange={e => props.mediaChanged('comment', e.target.value)} />
 		<h2>Date &amp; Time</h2>
 		<input
 			type='datetime-local'

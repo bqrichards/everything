@@ -26,13 +26,9 @@ class Media(Base):
 
 	id: int
 	filepath: str
-	title: str
-	comment: str
 	date: datetime
 
 	id = Column(Integer, primary_key=True)
 	filepath = Column(Text, unique=True, nullable=False)
-	title = Column(Text, nullable=False)
-	comment = Column(Text, nullable=False)
 	date = Column(DateTime)
 	modification_record = relationship(ModificationRecord)

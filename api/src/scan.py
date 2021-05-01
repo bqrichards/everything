@@ -1,8 +1,5 @@
 import os
-from collections import namedtuple
-from typing import List
-from exif import Image
-from metadata import Metadata, EXIF_DATE_FORMAT
+import typing
 from datetime import datetime
 from db import Media
 
@@ -22,49 +19,32 @@ def mime_from_ext(filepath):
 
 media_directory = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop', 'data')
 
-def _is_image(filepath: str) -> bool:
+
+def _read_date(filepath: str) -> datetime:
+	"""Read Modification Date from filepath"""
+	epoch_time = os.path.getmtime(filepath)
+	return datetime.fromtimestamp(epoch_time)
+
+
+def _is_media_file(filepath: str) -> bool:
+	"""Returns whether this file can be stored as media."""
 	_, ext = os.path.splitext(filepath)
-	return ext.lower() in image_extensions
+	return ext.lower() in allowed_extensions
 
 
-def _read_exif(filepath: str) -> Metadata:
-	with open(filepath, 'rb') as image_file:
-		my_image = Image(image_file)
-		return Metadata(my_image.get_all())
-
-
-ValidMediaResult = namedtuple('ValidMediaResult', ['valid_media', 'image_metadata'])
-def _is_valid_media(filepath) -> ValidMediaResult(bool, Metadata):
-	_, ext = os.path.splitext(filepath)
-	valid = ext.lower() in allowed_extensions
-	if not valid:
-		return ValidMediaResult(False, None)
-	
-	if _is_image(filepath):
-		return ValidMediaResult(True, _read_exif(filepath))
-	else:
-		return ValidMediaResult(True, None)
-
-
-def scan() -> List[Media]:
+def scan() -> typing.List[Media]:
+	"""Scan all items from disk to be stored in the database"""
 	retval = []
 
 	for root, _, files in os.walk(media_directory):
 		for filename in files:
 			filepath = os.path.join(root, filename)
-			valid = _is_valid_media(filepath)
-			mediaItem = None
-			if valid[0]:
-				mediaItem = Media(filepath=filepath, title='', comment='')
-			else:
+			if not _is_media_file(filepath):
 				continue
-			
-			if valid[1] is not None:
-				mediaItem.title = valid[1].title
-				mediaItem.comment = valid[1].comment
-				if valid[1].date:
-					mediaItem.date = datetime.strptime(valid[1].date, EXIF_DATE_FORMAT)
-			
-			retval.append(mediaItem)
+				
+			media_date = _read_date(filepath)
+			media_item = Media(filepath=filepath, date=media_date)
+
+			retval.append(media_item)
 	
 	return retval
