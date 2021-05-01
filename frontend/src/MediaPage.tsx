@@ -34,7 +34,6 @@ export const MediaPage = () => {
 	}, [mediaId])
 
 	const save = useCallback(() => {
-		console.log(pendingMedia)
 		api
 			.patch(`media/${mediaId}/edit`, pendingMedia)
 			.then(response => response.data)
@@ -51,7 +50,7 @@ export const MediaPage = () => {
 			const newMedia = {...oldMedia}
 			if (key === 'date') {
 				// Convert local time to UTC
-				newMedia[key] = moment(value).toISOString()
+				newMedia[key] = moment.utc(value).toISOString()
 			} else {
 				newMedia[key] = value
 			}
@@ -65,8 +64,7 @@ export const MediaPage = () => {
 			<div id='media-page-display-container'>
 				<img
 					id='media-page-display-image'
-					src={urlFromEndpoint(`media/visual/${mediaId}`)}
-					alt={media?.title || 'Untitled Media'} />
+					src={urlFromEndpoint(`media/visual/${mediaId}`)} />
 			</div>
 			<div id='media-page-edit-panel'>
 				<MediaMetadataPanel
