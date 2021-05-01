@@ -50,7 +50,7 @@ export const MediaPage = () => {
 			const newMedia = {...oldMedia}
 			if (key === 'date') {
 				// Convert local time to UTC
-				newMedia[key] = moment(value).toISOString()
+				newMedia[key] = moment.utc(value).toISOString()
 			} else {
 				newMedia[key] = value
 			}
