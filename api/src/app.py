@@ -1,4 +1,5 @@
 from typing import List, Union
+from thumbnail import generate_thumbnails, get_thumbnail_path, make_thumbnails_directory
 from flask import Flask, jsonify, send_file, request
 from flask_cors import CORS
 from dataclasses import dataclass
@@ -12,11 +13,12 @@ import dateutil.parser
 import logging
 import pytz
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/everything.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(metadata=metadata)
 db.init_app(app)
@@ -115,9 +117,11 @@ def flush():
 def get_thumbnail(media_id):
 	media = get_media_by_id(media_id)
 	if media is None:
+		logging.warn(f'Grabbing thumbnail for nonexistant media {media_id}')
 		return make_http_error('Missing Title', 'Media does not exist', 400)
 
-	return send_file(media.filepath, mimetype=mime_from_ext(media.filepath))
+	thumbnail_path = get_thumbnail_path(media)
+	return send_file(thumbnail_path, mimetype=mime_from_ext(thumbnail_path))
 
 
 @app.route('/api/media/visual/<media_id>')
@@ -154,17 +158,31 @@ def all():
 
 
 def scan_and_commit():
-	"""Get all media items from the scanner and commit them to DB"""
-	media_items = scan()
+	"""Get all media items from the scanner and commit them to DB.
+	
+	Then generate thumbnails.
+	"""
+	scanned_media_items = scan()
 
 	with app.app_context():
-		for media in media_items:
+		for media in scanned_media_items:
 			try:
 				db.session.add(media)
 				db.session.commit()
 			except IntegrityError:
 				db.session.rollback()
 
+	all_media_items = []
+	with app.app_context():
+		all_media_items = db.session.query(Media).all()
 
-scan_thread = threading.Thread(target=scan_and_commit)
-scan_thread.start()
+	generate_thumbnails(all_media_items)
+
+
+if __name__ == '__main__':
+	make_thumbnails_directory()
+
+	scan_thread = threading.Thread(target=scan_and_commit)
+	scan_thread.start()
+	
+	app.run(port=5000)
