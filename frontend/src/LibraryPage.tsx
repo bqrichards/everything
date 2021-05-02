@@ -1,17 +1,28 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { LibraryItem } from './components/LibraryItem'
-import { Media } from './models/Media'
+import { LibraryModel } from './models'
 import { api } from './api'
 import { Link } from 'react-router-dom'
 import './LibraryPage.css'
+import { LibraryModifiedBanner } from './components/LibraryModifiedBanner'
 
 export const LibraryPage = () => {
-	const [media, setMedia] = useState<Media[]>([])
+	const [library, setLibrary] = useState<LibraryModel>({media: [], canFlush: false})
 
 	useEffect(() => {
-		api.get<Media[]>('all')
+		api.get<LibraryModel>('library')
 			.then(response => response.data)
-			.then(setMedia)
+			.then(setLibrary)
+			.catch(e => {
+				console.warn(e)
+			})
+	}, [])
+
+	const writeChanges = useCallback(() => {
+		api.get('flush')
+			.then(() => {
+				setLibrary(prev => ({...prev, canFlush: false}))
+			})
 			.catch(e => {
 				console.warn(e)
 			})
@@ -20,8 +31,9 @@ export const LibraryPage = () => {
 	return (
 		<div id='library-page-container'>
 			<h1>Library</h1>
+			{library.canFlush && <LibraryModifiedBanner writeChanges={writeChanges} />}
 			<div className='grid-container'>
-				{media.map(mediaItem => (
+				{library.media.map(mediaItem => (
 					<Link to={`/media/${mediaItem.id}`}>
 						<LibraryItem
 							key={String(mediaItem.id)}

@@ -6,12 +6,14 @@ from dataclasses import dataclass
 from db import ModificationRecord, metadata, Media
 from flask_sqlalchemy import SQLAlchemy
 import threading
+from sqlalchemy.sql.functions import func
+from scan import mime_from_ext, scan
 from sqlalchemy.exc import IntegrityError
 from flush_media import flush_media
-from scan import mime_from_ext, scan
 import dateutil.parser
 import logging
 import pytz
+
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -40,27 +42,36 @@ def mark_media_modified(media_id):
 	except IntegrityError:
 		db.session.rollback()
 
+
+def unflushed_changes():
+	"""Returns whether there is media that has been modified since the last flush
+	
+		Note: Must be called within Flask app context
+	"""
+	modification_count = db.session.query(ModificationRecord).count()
+	return modification_count > 0
+
+
 def get_media_by_id(media_id):
 	return db.session.query(Media).get(media_id)
 
 
-def decode_media(media: Media):
-	new_media = {
-		'id': media.id,
-		'date': None if media.date is None else media.date.replace(tzinfo=pytz.UTC).isoformat()
-	}
-	
-	return new_media
+def encode_media(media: Union[Media, List[Media]]):
+	def get_new_media_date(m: Media):
+		return {
+			'id': m.id,
+			'date': None if m.date is None else m.date.replace(tzinfo=pytz.UTC).isoformat()
+		}
+
+	if type(media) == list:
+		return [get_new_media_date(m) for m in media]
+	else:
+		return get_new_media_date(media)
 
 
 def jsonify_media(media: Union[Media, List[Media]]):
 	if media is None:
 		raise ValueError('media cannot be None')
-
-	if type(media) == list:
-		return jsonify([decode_media(m) for m in media])
-	else:
-		return jsonify(decode_media(media))
 
 
 def update_media_with_json(media: Media, new_media: dict):
@@ -109,9 +120,9 @@ def make_http_error(title: str, detail: str, status: int):
 @app.route('/api/flush')
 def flush():
 	with app.app_context():
-		flush_media(db, complete=True)
+		flush_media(db)
 
-	return jsonify(True)
+	return '', 204
 
 @app.route('/api/thumbnail/<media_id>')
 def get_thumbnail(media_id):
@@ -139,7 +150,7 @@ def get_media(media_id):
 	if media is None:
 		return make_http_error('Missing Title', 'Media does not exist', 400)
 
-	return jsonify_media(media)
+	return jsonify(encode_media(media))
 
 
 @app.route('/api/media/<media_id>/edit', methods=['PATCH'])
@@ -148,13 +159,17 @@ def edit_media(media_id):
 	if new_media == None:
 		return make_http_error('Invalid media', 'Invalid media', 400)
 
-	return jsonify_media(new_media), 200
+	return jsonify(encode_media(new_media)), 200
+	
 
-
-@app.route('/api/all')
-def all():
+@app.route('/api/library')
+def library():
 	all_media = get_all_media()
-	return jsonify_media(all_media)
+	can_flush = unflushed_changes()
+	return jsonify({
+		'media': encode_media(all_media),
+		'canFlush': can_flush
+	})
 
 
 def scan_and_commit():
