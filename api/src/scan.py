@@ -22,7 +22,7 @@ def mime_from_ext(filepath):
 	}[ext.lower()]
 
 
-media_directory = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop', 'data')
+media_directory = './media'
 
 
 def is_image(filepath: str) -> bool:

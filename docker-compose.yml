@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: ./api
+      network: host
+    ports:
+    - 5000:5000
+    volumes:
+      - everything:/app/media
+  web:
+    build:
+      context: ./frontend
+      network: host
+    ports:
+    - 3000:3000
+volumes:
+  everything:
+    external: true
