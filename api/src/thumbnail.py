@@ -47,7 +47,7 @@ def _generate_thumbnail(media: Media):
 			command = _generate_thumbnail_video_command(media.filepath, output)
 		
 		subprocess.run(command, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-		logging.info(f'Generated thumbnail for media {media.filepath}')
+		logging.info(f'Thumbnail generated: {media.filepath} -> {output}')
 	except subprocess.CalledProcessError as e:
 		logging.error(f'Couldn\'t generate thumbnail for media {media.filepath}', exc_info=e)
 

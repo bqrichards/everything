@@ -28,7 +28,7 @@ def initialize_paths():
 	data_dir = os.getenv(_DATA_DIRECTORY_ENV_KEY)
 	_paths[_DATABASE_PATH_KEY] = os.path.join(data_dir, 'everything.db')
 	_paths[_MEDIA_DIRECTORY_KEY] = os.path.join(data_dir, 'media')
-	_paths[_THUMBNAILS_DIRECTORY_KEY] = os.path.join(_paths[_MEDIA_DIRECTORY_KEY], '.thumbnails')
+	_paths[_THUMBNAILS_DIRECTORY_KEY] = os.path.join(data_dir, '.thumbnails')
 
 	# Create directories
 	_try_make_dir(_paths[_MEDIA_DIRECTORY_KEY])

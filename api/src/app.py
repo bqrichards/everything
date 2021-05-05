@@ -38,8 +38,6 @@ initialize_db(database_uri)
 def load_spatialite(dbapi_conn, connection_record):
 	dbapi_conn.enable_load_extension(True)
 	dbapi_conn.load_extension('/usr/lib/x86_64-linux-gnu/mod_spatialite.so')
-	logging.info('Loaded SpatiaLite extension')
-
 
 
 def get_all_media():
@@ -194,12 +192,12 @@ def scan_and_commit():
 	"""
 	scanned_media_items = scan()
 
-	try:
-		with session_scope() as session:
-			for media in scanned_media_items:
+	for media in scanned_media_items:
+		try:
+			with session_scope() as session:
 				session.add(media)
-	except IntegrityError:
-		pass
+		except IntegrityError:
+			pass
 
 	all_media_items = []
 	with session_scope() as session:
@@ -208,8 +206,6 @@ def scan_and_commit():
 		all_media_items = items
 	
 	generate_thumbnails(all_media_items)
-
-	
 
 
 scan_thread = threading.Thread(target=scan_and_commit)

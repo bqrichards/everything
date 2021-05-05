@@ -1,14 +1,15 @@
-FROM python:3
+FROM python:3.9
 
 WORKDIR /app
 
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install ffmpeg libsqlite3-mod-spatialite -y
+RUN apt-get update && \
+	apt-get install -y ffmpeg libsqlite3-mod-spatialite
+
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
-CMD [ "flask", "run", "--host", "0.0.0.0", "-p", "5000" ]
+CMD [ "flask", "run", "--no-reload", "--host", "0.0.0.0", "-p", "5000" ]

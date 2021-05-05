@@ -3,7 +3,7 @@ import os
 import typing
 from datetime import datetime
 from db import Media
-from paths import get_media_directory, get_thumbnails_directory
+from paths import get_media_directory
 
 
 image_extensions = ['.jpg', '.png', '.jpeg']
@@ -35,7 +35,7 @@ def _read_date(filepath: str) -> datetime:
 
 
 def _is_media_file(filepath: str) -> bool:
-	"""Returns whether this file can be stored as media."""
+	"""Returns whether this file can be stored as media"""
 	_, ext = os.path.splitext(filepath)
 	return ext.lower() in allowed_extensions
 
@@ -48,10 +48,7 @@ def scan() -> typing.List[Media]:
 	retval = []
 	logging.info(f'Scanning directory {get_media_directory()}')
 
-	for root, dirs, files in os.walk(get_media_directory()):
-		# Ignore thumbnail directory
-		dirs[:] = [d for d in dirs if not d == get_thumbnails_directory()]
-
+	for root, _, files in os.walk(get_media_directory()):
 		for filename in files:
 			filepath = os.path.join(root, filename)
 			if not _is_media_file(filepath):
@@ -62,4 +59,5 @@ def scan() -> typing.List[Media]:
 
 			retval.append(media_item)
 	
+	logging.info(f'Scanned {len(retval)} media items')
 	return retval

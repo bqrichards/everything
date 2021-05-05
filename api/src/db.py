@@ -44,7 +44,7 @@ class Media(Base):
 def initialize_db(db_connection_string):
 	global _engine
 	global _Session
-	_engine = create_engine(db_connection_string, echo=True)
+	_engine = create_engine(db_connection_string)
 	_Session = sessionmaker(bind=_engine)
 	Base.metadata.create_all(_engine)
 
