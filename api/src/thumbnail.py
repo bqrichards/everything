@@ -20,7 +20,7 @@ def _does_thumbnail_exist(media: Media) -> bool:
 	return os.path.isfile(thumbnail_path)
 
 
-def _generate_thumbail_image(input_path: str, output_path: str):
+def _generate_thumbail_image_command(input_path: str, output_path: str):
 	"""Returns command to generate thumbnail from image
 	
 	Command: `ffmpeg -i input.jpg -vf scale="360:-1" output.jpg`
@@ -28,7 +28,7 @@ def _generate_thumbail_image(input_path: str, output_path: str):
 	return f'ffmpeg -i {input_path} -vf scale="{THUMBNAIL_WIDTH}:-1" {output_path}'
 
 
-def _generate_thumbnail_video(input_path: str, output_path: str):
+def _generate_thumbnail_video_command(input_path: str, output_path: str):
 	"""Returns command to generate thumbnail from video
 	
 	Command: `ffmpeg -i filename -ss 00:00:01.000 -vframes 1 -vf scale="360:-1" output.jpg`
@@ -42,9 +42,9 @@ def _generate_thumbnail(media: Media):
 	try:
 		command = None
 		if is_image(media.filepath):
-			command = _generate_thumbail_image(media.filepath, output)
+			command = _generate_thumbail_image_command(media.filepath, output)
 		else:
-			command = _generate_thumbnail_video(media.filepath, output)
+			command = _generate_thumbnail_video_command(media.filepath, output)
 		
 		subprocess.run(command, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 		logging.info(f'Generated thumbnail for media {media.filepath}')

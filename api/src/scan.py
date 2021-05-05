@@ -1,3 +1,4 @@
+import logging
 import os
 import typing
 from datetime import datetime
@@ -22,7 +23,7 @@ def mime_from_ext(filepath):
 	}[ext.lower()]
 
 
-media_directory = './media'
+media_directory = '/app/media/'
 
 
 def is_image(filepath: str) -> bool:
@@ -46,6 +47,7 @@ def _is_media_file(filepath: str) -> bool:
 def scan() -> typing.List[Media]:
 	"""Scan all items from disk to be stored in the database"""
 	retval = []
+	logging.info(f'Scanning directory {media_directory}')
 
 	for root, dirs, files in os.walk(media_directory):
 		# Ignore thumbnail directory
