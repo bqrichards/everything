@@ -1,46 +1,59 @@
 from typing import List, Union
-from thumbnail import generate_thumbnails, get_thumbnail_path, make_thumbnails_directory
+
+from sqlalchemy.exc import IntegrityError
+from thumbnail import generate_thumbnails, get_thumbnail_path
 from flask import Flask, jsonify, send_file, request
 from flask_cors import CORS
 from dataclasses import dataclass
-from db import ModificationRecord, metadata, Media
-from flask_sqlalchemy import SQLAlchemy
+from db import initialize_db, ModificationRecord, Media, get_engine, session_scope
+from sqlalchemy import event
 import threading
-from sqlalchemy.sql.functions import func
 from scan import mime_from_ext, scan
-from sqlalchemy.exc import IntegrityError
 from flush_media import flush_media
 import dateutil.parser
 import logging
 import pytz
+from paths import initialize_paths, get_database_path
 
 
 logging.getLogger().setLevel(logging.DEBUG)
 
+
+initialize_paths()
+
+
+database_uri = f'sqlite:///{get_database_path()}'
+logging.info(f'Using database uri {database_uri}')
+
+
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app/everything.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-db = SQLAlchemy(metadata=metadata)
-db.init_app(app)
-with app.app_context():
-	db.create_all()
+initialize_db(database_uri)
+
+
+@event.listens_for(get_engine(), 'connect')
+def load_spatialite(dbapi_conn, connection_record):
+	dbapi_conn.enable_load_extension(True)
+	dbapi_conn.load_extension('/usr/lib/x86_64-linux-gnu/mod_spatialite.so')
+	logging.info('Loaded SpatiaLite extension')
+
 
 
 def get_all_media():
-	return db.session.query(Media).all()
+	with session_scope() as session:
+		retval = session.query(Media).all()
+		session.expunge_all()
+		return retval
 
 
 def mark_media_modified(media_id):
 	""" Note: Must be called within Flask app context """
 	record = ModificationRecord(media_id=media_id)
-	try:
-		db.session.add(record)
-		db.session.commit()
-		logging.debug(f'Marked media_id seen: {media_id}')
-	except IntegrityError:
-		db.session.rollback()
+	with session_scope() as session:
+		session.add(record)
 
 
 def unflushed_changes():
@@ -48,12 +61,16 @@ def unflushed_changes():
 	
 		Note: Must be called within Flask app context
 	"""
-	modification_count = db.session.query(ModificationRecord).count()
-	return modification_count > 0
+	with session_scope() as session:
+		modification_count = session.query(ModificationRecord).count()
+		return modification_count > 0
 
 
 def get_media_by_id(media_id):
-	return db.session.query(Media).get(media_id)
+	with session_scope() as session:
+		retval = session.query(Media).get(media_id)
+		session.expunge_all()
+		return retval
 
 
 def encode_media(media: Union[Media, List[Media]]):
@@ -89,9 +106,7 @@ def update_media(media_id, new_media):
 
 	update_media_with_json(media, new_media)
 
-	with app.app_context():
-		db.session.commit()
-		mark_media_modified(media_id)
+	mark_media_modified(media_id)
 
 	return get_media_by_id(media_id)
 
@@ -179,22 +194,23 @@ def scan_and_commit():
 	"""
 	scanned_media_items = scan()
 
-	with app.app_context():
-		for media in scanned_media_items:
-			try:
-				db.session.add(media)
-				db.session.commit()
-			except IntegrityError:
-				db.session.rollback()
+	try:
+		with session_scope() as session:
+			for media in scanned_media_items:
+				session.add(media)
+	except IntegrityError:
+		pass
 
 	all_media_items = []
-	with app.app_context():
-		all_media_items = db.session.query(Media).all()
-
+	with session_scope() as session:
+		items = session.query(Media).all()
+		session.expunge_all()
+		all_media_items = items
+	
 	generate_thumbnails(all_media_items)
 
+	
 
-make_thumbnails_directory()
 
 scan_thread = threading.Thread(target=scan_and_commit)
 scan_thread.start()

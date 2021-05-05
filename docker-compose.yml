@@ -4,10 +4,12 @@ services:
     build:
       context: ./api
       network: host
+    environment: 
+      - DATA_DIR=/app/data
     ports:
     - 5000:5000
     volumes:
-      - everything:/app/media
+      - everything:/app/data
   web:
     build:
       context: ./frontend

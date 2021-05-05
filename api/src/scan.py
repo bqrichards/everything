@@ -3,9 +3,8 @@ import os
 import typing
 from datetime import datetime
 from db import Media
+from paths import get_media_directory, get_thumbnails_directory
 
-
-THUMBNAIL_DIRECTORY_NAME = '.thumbnails'
 
 image_extensions = ['.jpg', '.png', '.jpeg']
 video_extensions = ['.mp4', '.mov']
@@ -21,9 +20,6 @@ def mime_from_ext(filepath):
 		'.mp4': 'video/mp4',
 		'.mov': 'application/octet-stream'
 	}[ext.lower()]
-
-
-media_directory = '/app/media/'
 
 
 def is_image(filepath: str) -> bool:
@@ -45,13 +41,16 @@ def _is_media_file(filepath: str) -> bool:
 
 
 def scan() -> typing.List[Media]:
-	"""Scan all items from disk to be stored in the database"""
+	"""Scan all items from disk to be stored in the database
+	
+	Returns: the list of media found in this directory
+	"""
 	retval = []
-	logging.info(f'Scanning directory {media_directory}')
+	logging.info(f'Scanning directory {get_media_directory()}')
 
-	for root, dirs, files in os.walk(media_directory):
+	for root, dirs, files in os.walk(get_media_directory()):
 		# Ignore thumbnail directory
-		dirs[:] = [d for d in dirs if not d == THUMBNAIL_DIRECTORY_NAME]
+		dirs[:] = [d for d in dirs if not d == get_thumbnails_directory()]
 
 		for filename in files:
 			filepath = os.path.join(root, filename)
