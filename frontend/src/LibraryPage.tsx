@@ -34,10 +34,8 @@ export const LibraryPage = () => {
 			{library.canFlush && <LibraryModifiedBanner writeChanges={writeChanges} />}
 			<div className='grid-container'>
 				{library.media.map(mediaItem => (
-					<Link to={`/media/${mediaItem.id}`}>
-						<LibraryItem
-							key={String(mediaItem.id)}
-							media={mediaItem} />
+					<Link to={`/media/${mediaItem.id}`} key={String(mediaItem.id)}>
+						<LibraryItem media={mediaItem} />
 					</Link>
 				))}
 			</div>

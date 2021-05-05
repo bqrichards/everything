@@ -19,7 +19,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/everything.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app/everything.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(metadata=metadata)
@@ -194,10 +194,7 @@ def scan_and_commit():
 	generate_thumbnails(all_media_items)
 
 
-if __name__ == '__main__':
-	make_thumbnails_directory()
+make_thumbnails_directory()
 
-	scan_thread = threading.Thread(target=scan_and_commit)
-	scan_thread.start()
-	
-	app.run(port=5000)
+scan_thread = threading.Thread(target=scan_and_commit)
+scan_thread.start()
