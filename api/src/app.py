@@ -1,3 +1,4 @@
+import os
 from typing import List, Union
 
 from sqlalchemy.exc import IntegrityError
@@ -6,7 +7,6 @@ from flask import Flask, jsonify, send_file, request
 from flask_cors import CORS
 from dataclasses import dataclass
 from db import initialize_db, ModificationRecord, Media, get_engine, session_scope
-from sqlalchemy import event
 import threading
 from scan import mime_from_ext, scan
 from flush_media import flush_media
@@ -31,13 +31,8 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
+
 initialize_db(database_uri)
-
-
-@event.listens_for(get_engine(), 'connect')
-def load_spatialite(dbapi_conn, connection_record):
-	dbapi_conn.enable_load_extension(True)
-	dbapi_conn.load_extension('/usr/lib/x86_64-linux-gnu/mod_spatialite.so')
 
 
 def get_all_media():
@@ -128,6 +123,12 @@ class HttpError:
 
 def make_http_error(title: str, detail: str, status: int):
 	return jsonify(HttpError(detail, 'about:blank', title, status)), status
+
+
+@app.route('/api/clear-db')
+def clear_db():
+	os.remove('/app/data/everything.db')
+	return '', 204
 
 
 @app.route('/api/flush')
