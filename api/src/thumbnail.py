@@ -2,16 +2,16 @@ import logging
 import typing
 import os
 from db import Media
-from scan import media_directory, is_image, THUMBNAIL_DIRECTORY_NAME
+from scan import is_image
+from paths import get_thumbnails_directory
 import subprocess
 
-THUMBNAIL_DIRECTORY = os.path.join(media_directory, THUMBNAIL_DIRECTORY_NAME)
 THUMBNAIL_WIDTH = 96
 
 
 def get_thumbnail_path(media: Media) -> str:
 	"""Get the path of a thumbnail of media"""
-	return os.path.join(THUMBNAIL_DIRECTORY, f'{media.id}.jpg')
+	return os.path.join(get_thumbnails_directory(), f'{media.id}.jpg')
 
 
 def _does_thumbnail_exist(media: Media) -> bool:
@@ -47,18 +47,9 @@ def _generate_thumbnail(media: Media):
 			command = _generate_thumbnail_video_command(media.filepath, output)
 		
 		subprocess.run(command, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-		logging.info(f'Generated thumbnail for media {media.filepath}')
+		logging.info(f'Thumbnail generated: {media.filepath} -> {output}')
 	except subprocess.CalledProcessError as e:
 		logging.error(f'Couldn\'t generate thumbnail for media {media.filepath}', exc_info=e)
-
-
-def make_thumbnails_directory():
-	"""Generates the directory used to store thumbnails"""
-	try:
-		os.mkdir(THUMBNAIL_DIRECTORY)
-		logging.info('Generated thumbnails directory')
-	except FileExistsError:
-		logging.info('Thumbnail directory exists')
 
 
 def generate_thumbnails(media_list: typing.List[Media]):

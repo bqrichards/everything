@@ -1,46 +1,53 @@
+import os
 from typing import List, Union
-from thumbnail import generate_thumbnails, get_thumbnail_path, make_thumbnails_directory
+
+from sqlalchemy.exc import IntegrityError
+from thumbnail import generate_thumbnails, get_thumbnail_path
 from flask import Flask, jsonify, send_file, request
+from paths import initialize_paths, get_database_path
 from flask_cors import CORS
 from dataclasses import dataclass
-from db import ModificationRecord, metadata, Media
-from flask_sqlalchemy import SQLAlchemy
-import threading
-from sqlalchemy.sql.functions import func
+from db import initialize_db, ModificationRecord, Media, session_scope
+from geoalchemy2.shape import to_shape
 from scan import mime_from_ext, scan
-from sqlalchemy.exc import IntegrityError
 from flush_media import flush_media
 import dateutil.parser
+import threading
 import logging
 import pytz
 
 
 logging.getLogger().setLevel(logging.DEBUG)
 
+
+initialize_paths()
+
+
+database_uri = f'sqlite:///{get_database_path()}'
+logging.info(f'Using database uri {database_uri}')
+
+
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app/everything.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-db = SQLAlchemy(metadata=metadata)
-db.init_app(app)
-with app.app_context():
-	db.create_all()
+
+initialize_db(database_uri)
 
 
 def get_all_media():
-	return db.session.query(Media).all()
+	with session_scope() as session:
+		retval = session.query(Media).all()
+		session.expunge_all()
+		return retval
 
 
 def mark_media_modified(media_id):
 	""" Note: Must be called within Flask app context """
 	record = ModificationRecord(media_id=media_id)
-	try:
-		db.session.add(record)
-		db.session.commit()
-		logging.debug(f'Marked media_id seen: {media_id}')
-	except IntegrityError:
-		db.session.rollback()
+	with session_scope() as session:
+		session.add(record)
 
 
 def unflushed_changes():
@@ -48,19 +55,29 @@ def unflushed_changes():
 	
 		Note: Must be called within Flask app context
 	"""
-	modification_count = db.session.query(ModificationRecord).count()
-	return modification_count > 0
+	with session_scope() as session:
+		modification_count = session.query(ModificationRecord).count()
+		return modification_count > 0
 
 
 def get_media_by_id(media_id):
-	return db.session.query(Media).get(media_id)
+	with session_scope() as session:
+		retval = session.query(Media).get(media_id)
+		session.expunge_all()
+		return retval
 
 
 def encode_media(media: Union[Media, List[Media]]):
 	def get_new_media_date(m: Media):
+		location = None
+		if not m.location is None:
+			p = to_shape(m.location)
+			location = dict(lat=p.x, lon=p.y)
+
 		return {
 			'id': m.id,
-			'date': None if m.date is None else m.date.replace(tzinfo=pytz.UTC).isoformat()
+			'date': None if m.date is None else m.date.replace(tzinfo=pytz.UTC).isoformat(),
+			'location': location
 		}
 
 	if type(media) == list:
@@ -89,9 +106,7 @@ def update_media(media_id, new_media):
 
 	update_media_with_json(media, new_media)
 
-	with app.app_context():
-		db.session.commit()
-		mark_media_modified(media_id)
+	mark_media_modified(media_id)
 
 	return get_media_by_id(media_id)
 
@@ -115,6 +130,12 @@ class HttpError:
 
 def make_http_error(title: str, detail: str, status: int):
 	return jsonify(HttpError(detail, 'about:blank', title, status)), status
+
+
+@app.route('/api/clear-db')
+def clear_db():
+	os.remove('/app/data/everything.db')
+	return '', 204
 
 
 @app.route('/api/flush')
@@ -179,22 +200,21 @@ def scan_and_commit():
 	"""
 	scanned_media_items = scan()
 
-	with app.app_context():
-		for media in scanned_media_items:
-			try:
-				db.session.add(media)
-				db.session.commit()
-			except IntegrityError:
-				db.session.rollback()
+	for media in scanned_media_items:
+		try:
+			with session_scope() as session:
+				session.add(media)
+		except IntegrityError:
+			pass
 
 	all_media_items = []
-	with app.app_context():
-		all_media_items = db.session.query(Media).all()
-
+	with session_scope() as session:
+		items = session.query(Media).all()
+		session.expunge_all()
+		all_media_items = items
+	
 	generate_thumbnails(all_media_items)
 
-
-make_thumbnails_directory()
 
 scan_thread = threading.Thread(target=scan_and_commit)
 scan_thread.start()
