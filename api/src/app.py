@@ -4,16 +4,17 @@ from typing import List, Union
 from sqlalchemy.exc import IntegrityError
 from thumbnail import generate_thumbnails, get_thumbnail_path
 from flask import Flask, jsonify, send_file, request
+from paths import initialize_paths, get_database_path
 from flask_cors import CORS
 from dataclasses import dataclass
-from db import initialize_db, ModificationRecord, Media, get_engine, session_scope
-import threading
+from db import initialize_db, ModificationRecord, Media, session_scope
+from geoalchemy2.shape import to_shape
 from scan import mime_from_ext, scan
 from flush_media import flush_media
 import dateutil.parser
+import threading
 import logging
 import pytz
-from paths import initialize_paths, get_database_path
 
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -68,9 +69,15 @@ def get_media_by_id(media_id):
 
 def encode_media(media: Union[Media, List[Media]]):
 	def get_new_media_date(m: Media):
+		location = None
+		if not m.location is None:
+			p = to_shape(m.location)
+			location = dict(lat=p.x, lon=p.y)
+
 		return {
 			'id': m.id,
-			'date': None if m.date is None else m.date.replace(tzinfo=pytz.UTC).isoformat()
+			'date': None if m.date is None else m.date.replace(tzinfo=pytz.UTC).isoformat(),
+			'location': location
 		}
 
 	if type(media) == list:

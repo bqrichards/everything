@@ -9,6 +9,7 @@ from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql import select, func
 from contextlib import contextmanager
 from geoalchemy2 import Geometry
+from geoalchemy2.elements import WKBElement
 from dataclasses import dataclass
 from datetime import datetime
 import logging
@@ -40,7 +41,7 @@ class Media(Base):
 	id: int
 	filepath: str
 	date: datetime
-	location: str
+	location: WKBElement
 
 	id = Column(Integer, primary_key=True)
 	filepath = Column(Text, unique=True, nullable=False)
