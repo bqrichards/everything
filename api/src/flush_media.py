@@ -23,51 +23,44 @@ def _write_media(media: Media) -> bool:
 def flush_media(complete=False):
 	"""Perform a flush of the database to disk
 
-	Note: Must be called within app context.
-
-	Args:
-		complete (bool, optional): TODO whether to flush all media items to disk.
+	Parameters:
+		complete (bool): whether to flush all media items to disk.
 		Default is `False`, meaning only flush media in modification record.
 	"""
 	logging.info(f'Flushing database with complete={complete}')
-	media_to_write = []
-	if not complete:
-		modifications = None
-		with session_scope() as session:
+	with session_scope() as session:
+		media_to_write = []
+		if complete:
+			media_to_write = session.query(Media).all()
+		else:
 			modifications = session.query(ModificationRecord.media_id).all()
-			session.expunge_all()
 
-		modified_media_ids = [result[0] for result in modifications]
-		if len(modified_media_ids) == 0:
-			logging.info('No media to flush')
+			modified_media_ids = [result[0] for result in modifications]
+			if len(modified_media_ids) == 0:
+				logging.info('No media to flush')
+				return
+
+			modified_media_ids.sort()
+			media_to_write = session.query(Media).filter(Media.id.in_(modified_media_ids)).all()
+	
+		successful_writes = []
+		unsuccessful_writes = []
+		for media in media_to_write:
+			if (_write_media(media)):
+				successful_writes.append(media.id)
+			else:
+				unsuccessful_writes.append(media.id)
+
+		if complete:
+			logging.info('Flushed database')
 			return
 
-		modified_media_ids.sort()
-		with session_scope() as session:
-			media_to_write = session.query(Media).filter(Media.id.in_(modified_media_ids)).all()
-	else:
-		with session_scope() as session:
-			media_to_write = session.query(Media).all()
-
-	session.expunge_all()
-	
-	successful_writes = []
-	unsuccessful_writes = []
-	for media in media_to_write:
-		if (_write_media(media)):
-			successful_writes.append(media.id)
-		else:
-			unsuccessful_writes.append(media.id)
-
-	# Remove successful writes from modification table
-	if not complete:
-		with session_scope() as session:
-			session.query(ModificationRecord).filter(ModificationRecord.media_id.in_(successful_writes)).delete(synchronize_session=False)
-			session.expire_all()
+		# Remove successful writes from modification table
+		session.query(ModificationRecord).filter(ModificationRecord.media_id.in_(successful_writes)).delete(synchronize_session=False)
+		session.expire_all()
 
 		if len(successful_writes) == len(modified_media_ids):
 			logging.info('All modifications successfully flushed')
 		else:
 			logging.warn(f'Could not write following media_ids: {", ".join([str(i) for i in unsuccessful_writes])}')
-	else:
-		logging.info('Flushed database')
+		

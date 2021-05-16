@@ -51,6 +51,7 @@ class Media(Base):
 
 
 def initialize_db(db_connection_string):
+	"""Creates database engine and sessionmaker"""
 	global _engine
 	global _Session
 	_engine = create_engine(db_connection_string)
@@ -72,10 +73,6 @@ def initialize_db(db_connection_string):
 
 	_Session = sessionmaker(bind=_engine)
 	Base.metadata.create_all(_engine)
-
-
-def get_engine():
-	return _engine
 
 
 # https://docs.sqlalchemy.org/en/13/orm/session_basics.html
