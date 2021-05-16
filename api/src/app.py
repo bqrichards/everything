@@ -140,9 +140,7 @@ def clear_db():
 
 @app.route('/api/flush')
 def flush():
-	with app.app_context():
-		flush_media(db)
-
+	flush_media()
 	return '', 204
 
 @app.route('/api/thumbnail/<media_id>')
