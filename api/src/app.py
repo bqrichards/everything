@@ -35,12 +35,6 @@ def make_http_error(title: str, detail: str, status: int):
 	return jsonify(HttpError(detail, 'about:blank', title, status)), status
 
 
-@app.route('/api/clear-db')
-def clear_db():
-	os.remove('/app/data/everything.db')
-	return '', 204
-
-
 @app.route('/api/flush')
 def flush():
 	flush_media()

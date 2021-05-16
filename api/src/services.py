@@ -1,5 +1,6 @@
 import threading
-from typing import List, TypedDict, Union
+from typing import List, Optional, Union
+from dataclasses import dataclass
 from geoalchemy2.shape import to_shape
 import pytz
 from sqlalchemy.exc import IntegrityError
@@ -10,7 +11,8 @@ from scan import scan
 from thumbnail import generate_thumbnails
 
 
-def encode_media(media: Union[Media, List[Media]]):
+def _encode_media(media: Union[Media, List[Media]]):
+	"""Takes a Media or list of Media and converts the data to a JSON serializable format"""
 	def get_new_media_date(m: Media):
 		location = None
 		if not m.location is None:
@@ -23,33 +25,53 @@ def encode_media(media: Union[Media, List[Media]]):
 			'location': location
 		}
 
-	if type(media) == list:
+	if isinstance(media, list):
 		return [get_new_media_date(m) for m in media]
 	else:
 		return get_new_media_date(media)
 
 
-class Library(TypedDict):
+@dataclass
+class Library:
+	"""Response type for fetching Library"""
+
+	"""All Media items"""
 	media: List[Media]
+
+	"""Whether there is modified Media to flush"""
 	canFlush: bool
 
 
 def get_library() -> Library:
+	"""Fetches the Library"""
 	all_media = get_all_media()
-	encoded_media = encode_media(all_media)
+	encoded_media = _encode_media(all_media)
 	can_flush = unflushed_changes()
 	return Library(media=encoded_media, canFlush=can_flush)
 
 
-def get_single_media(media_id: int) -> Union[Media, None]:
+def get_single_media(media_id: int) -> Optional[Media]:
+	"""Fetches single Media by ID
+	
+	Parameters:
+		media_id (int): Media ID
+	
+	Returns: Media if could be found, None if not
+	"""
 	media = get_media_by_id(media_id)
 	if media is None:
 		return None
 
-	return encode_media(media)
+	return _encode_media(media)
 
 
 def _update_media_with_json(media: Media, new_media: dict):
+	"""Updates piece of Media with new Media data in dictionary
+	
+	Parameters:
+		media (Media): Media to alter
+		new_media (dict): New Media data to apply
+	"""
 	if new_media['date'] is None:
 		return
 
@@ -60,7 +82,16 @@ def _update_media_with_json(media: Media, new_media: dict):
 		fresh_media.date = utc_date
 
 
-def _update_media(media_id: int, new_media):
+def _update_media(media_id: int, new_media: dict) -> Optional[Media]:
+	"""Updates piece of Media with new Media data in dictionary.
+	Then marks this Media as modified since last flush.
+	
+	Parameters:
+		media (Media): Media to alter
+		new_media (dict): New Media data to apply
+	
+	Returns: Media if properly updated, None if no changes occurred
+	"""
 	media = get_media_by_id(media_id)
 	if media is None:
 		return None
@@ -72,17 +103,24 @@ def _update_media(media_id: int, new_media):
 	return get_media_by_id(media_id)
 
 
-def update_single_media(media_id: int, new_media) -> Union[Media, None]:
+def update_single_media(media_id: int, new_media: dict) -> Optional[Media]:
+	"""Updates piece of Media with new Media data in dictionary
+	
+	Parameters:
+		media (Media): Media to alter
+		new_media (dict): New Media data to apply
+
+	Returns: Media if able to be found and modified, None if not
+	"""
 	updated_media = _update_media(media_id, new_media)
 	if updated_media is None:
 		return None
 
-	return encode_media(updated_media)
+	return _encode_media(updated_media)
 
 
 def _scan_and_commit():
 	"""Get all media items from the scanner and commit them to DB.
-	
 	Then generate thumbnails.
 	"""
 	scanned_media_items = scan()
@@ -104,7 +142,7 @@ def _scan_and_commit():
 
 
 def scan_media_library():
-	"""TODO docstring"""
+	"""Starts thread to scan media library and generate thumbnails"""
 	scan_thread = threading.Thread(target=_scan_and_commit)
 	scan_thread.start()
 

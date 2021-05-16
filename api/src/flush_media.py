@@ -23,10 +23,8 @@ def _write_media(media: Media) -> bool:
 def flush_media(complete=False):
 	"""Perform a flush of the database to disk
 
-	Note: Must be called within app context.
-
-	Args:
-		complete (bool, optional): TODO whether to flush all media items to disk.
+	Parameters:
+		complete (bool): whether to flush all media items to disk.
 		Default is `False`, meaning only flush media in modification record.
 	"""
 	logging.info(f'Flushing database with complete={complete}')

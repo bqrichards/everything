@@ -5,7 +5,11 @@ from sqlalchemy.exc import IntegrityError
 
 
 def mark_media_modified(media_id: int):
-	""" Note: Must be called within Flask app context """
+	"""Creates a ModificationRecord for a Media item by ID
+	
+	Parameters:
+		media_id (int): ID of Media
+	"""
 	try:
 		record = ModificationRecord(media_id=media_id)
 		with session_scope() as session:
@@ -15,7 +19,13 @@ def mark_media_modified(media_id: int):
 
 
 def get_media_by_id(media_id: int) -> Media:
-	"""TODO docstring"""
+	"""Query the database for one Media item by ID
+	
+	Parameters:
+		media_id (int): ID of Media
+	
+	Returns: Media with ID
+	"""
 	with session_scope() as session:
 		retval = session.query(Media).get(media_id)
 		session.expunge_all()
@@ -23,7 +33,10 @@ def get_media_by_id(media_id: int) -> Media:
 
 
 def get_all_media() -> List[Media]:
-	"""TODO docstring"""
+	"""Query the database for all Media items
+	
+	Returns: All Media in database
+	"""
 	with session_scope() as session:
 		retval = session.query(Media).all()
 		session.expunge_all()
@@ -31,9 +44,9 @@ def get_all_media() -> List[Media]:
 
 
 def unflushed_changes() -> bool:
-	"""Returns whether there is media that has been modified since the last flush
+	"""Checks whether there is media that has been modified since the last flush
 	
-		Note: Must be called within Flask app context
+		Returns: whether unflushed media exists
 	"""
 	with session_scope() as session:
 		modification_count = session.query(ModificationRecord).count()
