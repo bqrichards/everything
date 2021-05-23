@@ -1,15 +1,15 @@
-import os
-from db_actions import get_media_by_id
-from models import HttpError
-from services import get_library, get_single_media, scan_media_library, update_single_media
+from services import get_library, get_single_media, scan_media_library, update_single_media, upload_new_media
+from paths import _FRONTEND_URL_ENV_KEY, initialize_paths, get_database_path
+from flask import Flask, jsonify, send_file, request, redirect
 from thumbnail import get_thumbnail_path
-from flask import Flask, jsonify, send_file, request
-from paths import initialize_paths, get_database_path
-from flask_cors import CORS
-from db import initialize_db
-from scan import mime_from_ext
+from db_actions import get_media_by_id
 from flush_media import flush_media
+from scan import mime_from_ext
+from db import initialize_db
+from models import HttpError
+from flask_cors import CORS
 import logging
+import os
 
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -82,6 +82,14 @@ def edit_media(media_id):
 def library():
 	library = get_library()
 	return jsonify(library)
+
+
+@app.route('/api/upload-media', methods=['POST'])
+def upload_media():
+	if upload_new_media(request.files.getlist('file[]')):
+		return redirect(os.getenv(_FRONTEND_URL_ENV_KEY))
+	else:
+		return jsonify(False, 400)
 
 
 scan_media_library()

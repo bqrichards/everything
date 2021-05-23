@@ -1,14 +1,17 @@
+import logging
 import threading
 from typing import List, Optional, Union
 from dataclasses import dataclass
 from geoalchemy2.shape import to_shape
-import pytz
 from sqlalchemy.exc import IntegrityError
+from werkzeug.datastructures import FileStorage
 from db import Media, session_scope
 from db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
-import dateutil.parser
-from scan import scan
+from paths import generate_random_media_filepath
+from scan import get_extension, is_media_file, scan
 from thumbnail import generate_thumbnails
+import dateutil.parser
+import pytz
 
 
 def _encode_media(media: Union[Media, List[Media]]):
@@ -146,3 +149,24 @@ def scan_media_library():
 	scan_thread = threading.Thread(target=_scan_and_commit)
 	scan_thread.start()
 
+
+def upload_new_media(files: 'list[FileStorage]'):
+	"""Saves a list of files to media storage and rescans the library"""
+	if not files:
+		return False
+	
+	for file in files:
+		# Check if file has valid extension
+		if not is_media_file(file.filename):
+			logging.info(f'Skipped {file.filename}, invalid media')
+			continue
+
+		filename = generate_random_media_filepath(get_extension(file.filename))
+		logging.info(f'Uploading file {file.filename} -> {filename}')
+
+		# Save
+		file.save(filename)
+	
+	scan_media_library()
+
+	return True
