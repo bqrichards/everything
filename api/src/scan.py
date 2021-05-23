@@ -13,8 +13,18 @@ video_extensions = ['.mp4', '.mov']
 allowed_extensions = image_extensions + video_extensions
 
 
-def mime_from_ext(filepath):
+def get_extension(filepath: str):
+	"""Returns the extension of a filepath
+	
+	Parameters:
+		filepath (str): The filepath to retreive the extension of
+	"""
 	_, ext = os.path.splitext(filepath)
+	return ext
+
+
+def mime_from_ext(filepath: str):
+	ext = get_extension(filepath)
 	return {
 		'.jpg': 'image/jpeg',
 		'.jpeg': 'image/jpeg',
@@ -26,7 +36,7 @@ def mime_from_ext(filepath):
 
 def is_image(filepath: str) -> bool:
 	"""Returns whether a filepath is an image"""
-	_, ext = os.path.splitext(filepath)
+	ext = get_extension(filepath)
 	return ext.lower() in image_extensions
 
 
@@ -78,9 +88,13 @@ def _read_location(filepath: str) -> typing.Optional[str]:
 	return None
 
 
-def _is_media_file(filepath: str) -> bool:
-	"""Returns whether this file can be stored as media"""
-	_, ext = os.path.splitext(filepath)
+def is_media_file(filepath: str) -> bool:
+	"""Returns whether this file can be stored as Media
+	
+	Parameters:
+		filepath (str): Full filepath of file
+	"""
+	ext = get_extension(filepath)
 	return ext.lower() in allowed_extensions
 
 
@@ -95,7 +109,7 @@ def scan() -> typing.List[Media]:
 	for root, _, files in os.walk(get_media_directory()):
 		for filename in files:
 			filepath = os.path.join(root, filename)
-			if not _is_media_file(filepath):
+			if not is_media_file(filepath):
 				continue
 				
 			media_date = _read_date(filepath)

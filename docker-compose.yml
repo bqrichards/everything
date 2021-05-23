@@ -6,6 +6,7 @@ services:
       network: host
     environment: 
       - DATA_DIR=/app/data
+      - FRONTEND_URL=http://localhost:3000
     ports:
     - 5000:5000
     volumes:

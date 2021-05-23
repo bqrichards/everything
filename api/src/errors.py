@@ -6,6 +6,10 @@ import os
 ERROR_DATA_DIRECTORY_NOT_SET = 123
 
 
+"""Error code for FRONTEND_URL enviroment variable not being set"""
+ERROR_FRONTEND_NOT_SET = 111
+
+
 def _shutdown_server(status_code: int):
 	"""Shut down Flask webserver
 	
