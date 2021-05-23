@@ -8,8 +8,7 @@ import { LibraryModifiedBanner } from './components/LibraryModifiedBanner'
 import { AddMediaModal } from './components/AddMediaModal'
 import './LibraryPage.css'
 
-// TODO
-// Modal.setAppElement('#app')
+Modal.setAppElement('body')
 
 export const LibraryPage = () => {
 	const [library, setLibrary] = useState<LibraryModel>({media: [], canFlush: false})

@@ -25,7 +25,7 @@ export const AddMediaModal = () => {
 				<input type='file' name='file[]' id='files' multiple directory='' webkitdirectory='' mozdirectory='' onChange={handleFiles} ref={fileInputRef} />
 				<input type='submit' id='submit-file' className='hidden' disabled={!fileList} />
 			</form>
-			{!!fileList ? Array.from(fileList).map(file => <AddMediaFileRow file={file} />) : (
+			{!!fileList ? Array.from(fileList).map((file, idx) => <AddMediaFileRow file={file} key={String(idx)} />) : (
 				<div>
 					<p>No media selected</p>
 				</div>
