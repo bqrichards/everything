@@ -1,0 +1,81 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"version": "1.0.0",
+		"title": "Everything API",
+		"description": "API used by Everything frontend"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:5000/api/"
+		}
+	],
+	"paths": {
+		"/library": {
+			"get": {
+				"summary": "Get Media Library",
+				"operationId": "getLibrary",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Media"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Media": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"description": "Media ID"
+					},
+					"date": {
+						"type": "string",
+						"description": "Datetime in ISO 8601 format"
+					},
+					"location": {
+						"type": "object",
+						"description": "Location media was taken",
+						"properties": {
+							"lat": {
+								"type": "number",
+								"format": "float",
+								"description": "Latitude"
+							},
+							"lon": {
+								"type": "number",
+								"format": "float",
+								"description": "Longitude"
+							}
+						},
+						"required": [
+							"lat",
+							"lon"
+						]
+					}
+				},
+				"example": {
+					"id": 10,
+					"date": "2021-05-23T22:31:11+00:00",
+					"location": {
+						"lat": 42.01547,
+						"lon": -93.67865
+					}
+				},
+				"required": [
+					"id"
+				]
+			}
+		}
+	}
+}
