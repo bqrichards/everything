@@ -846,6 +846,28 @@ ul.nav-tabs {
   <script>
     // Script section to load models into a JS Var
     var defs = {}
+    defs["HTTPError"] = {
+  "type" : "object",
+  "properties" : {
+    "detail" : {
+      "type" : "string",
+      "description" : "A human-readable description of the specific error"
+    },
+    "type" : {
+      "type" : "string",
+      "description" : "A URL to a document describing the error condition"
+    },
+    "title" : {
+      "type" : "string",
+      "description" : "A short, human-readable title for the general error type"
+    },
+    "status" : {
+      "type" : "integer",
+      "description" : "HTTP status code"
+    }
+  },
+  "description" : "HTTP Error"
+};
     defs["Media"] = {
   "required" : [ "id" ],
   "type" : "object",
@@ -862,6 +884,7 @@ ul.nav-tabs {
       "$ref" : "#/components/schemas/Media_location"
     }
   },
+  "description" : "Media",
   "example" : {
     "id" : 10,
     "date" : "2021-05-23T22:31:11+00:00",
@@ -888,6 +911,17 @@ ul.nav-tabs {
   },
   "description" : "Location media was taken"
 };
+    defs["partialMedia"] = {
+  "title" : "partialMedia",
+  "type" : "object",
+  "properties" : {
+    "date" : {
+      "type" : "string",
+      "description" : "UTC Date",
+      "format" : "date"
+    }
+  }
+};
 
     var errs = {};
   </script>
@@ -907,8 +941,26 @@ ul.nav-tabs {
             <li class="nav-fixed nav-header active" data-group="_"><a href="#api-_">API Summary</a></li>
 
                   <li class="nav-header" data-group="Default"><a href="#api-Default">API Methods - Default</a></li>
+                    <li data-group="Default" data-name="editMediaInfo" class="">
+                      <a href="#api-Default-editMediaInfo">editMediaInfo</a>
+                    </li>
+                    <li data-group="Default" data-name="flushMedia" class="">
+                      <a href="#api-Default-flushMedia">flushMedia</a>
+                    </li>
                     <li data-group="Default" data-name="getLibrary" class="">
                       <a href="#api-Default-getLibrary">getLibrary</a>
+                    </li>
+                    <li data-group="Default" data-name="getMediaInfo" class="">
+                      <a href="#api-Default-getMediaInfo">getMediaInfo</a>
+                    </li>
+                    <li data-group="Default" data-name="getMediaThumbnail" class="">
+                      <a href="#api-Default-getMediaThumbnail">getMediaThumbnail</a>
+                    </li>
+                    <li data-group="Default" data-name="getMediaVisual" class="">
+                      <a href="#api-Default-getMediaVisual">getMediaVisual</a>
+                    </li>
+                    <li data-group="Default" data-name="uploadMedia" class="">
+                      <a href="#api-Default-uploadMedia">uploadMedia</a>
                     </li>
           </ul>
         </nav>
@@ -933,6 +985,715 @@ ul.nav-tabs {
         <div id="sections">
                 <section id="api-Default">
                   <h1>Default</h1>
+                    <div id="api-Default-editMediaInfo">
+                      <article id="api-Default-editMediaInfo-0" data-group="User" data-name="editMediaInfo" data-version="0">
+                        <div class="pull-left">
+                          <h1>editMediaInfo</h1>
+                          <p>Edit Media Information</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="patch"><code><span class="pln">/media/{mediaId}/edit</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-editMediaInfo-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-editMediaInfo-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-editMediaInfo-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-editMediaInfo-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-editMediaInfo-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X PATCH\
+ -H "Accept: application/json"\
+ -H "Content-Type: application/json"\
+ "http://localhost:5000/api/media/{mediaId}/edit"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-editMediaInfo-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        PartialMedia partialMedia = ; // PartialMedia | 
+        
+        try {
+            Media result = apiInstance.editMediaInfo(mediaId, partialMedia);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#editMediaInfo");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-editMediaInfo-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        PartialMedia partialMedia = ; // PartialMedia | 
+        
+        try {
+            Media result = apiInstance.editMediaInfo(mediaId, partialMedia);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#editMediaInfo");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-editMediaInfo-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *mediaId = 56; // Media ID (default to null)
+PartialMedia *partialMedia = ; // 
+
+// Edit Media Information
+[apiInstance editMediaInfoWith:mediaId
+    partialMedia:partialMedia
+              completionHandler: ^(Media output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var mediaId = 56; // {Integer} Media ID
+var partialMedia = ; // {PartialMedia} 
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.editMediaInfo(mediaId, partialMedia, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-editMediaInfo-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class editMediaInfoExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var mediaId = 56;  // Integer | Media ID (default to null)
+            var partialMedia = new PartialMedia(); // PartialMedia | 
+
+            try {
+                // Edit Media Information
+                Media result = apiInstance.editMediaInfo(mediaId, partialMedia);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.editMediaInfo: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$mediaId = 56; // Integer | Media ID
+$partialMedia = ; // PartialMedia | 
+
+try {
+    $result = $api_instance->editMediaInfo($mediaId, $partialMedia);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->editMediaInfo: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $mediaId = 56; # Integer | Media ID
+my $partialMedia = WWW::OPenAPIClient::Object::PartialMedia->new(); # PartialMedia | 
+
+eval { 
+    my $result = $api_instance->editMediaInfo(mediaId => $mediaId, partialMedia => $partialMedia);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->editMediaInfo: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+mediaId = 56 # Integer | Media ID (default to null)
+partialMedia =  # PartialMedia | 
+
+try: 
+    # Edit Media Information
+    api_response = api_instance.edit_media_info(mediaId, partialMedia)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->editMediaInfo: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-editMediaInfo-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let mediaId = 56; // Integer
+    let partialMedia = ; // PartialMedia
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.editMediaInfo(mediaId, partialMedia, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">mediaId*</td>
+<td>
+
+
+    <div id="d2e199_editMediaInfo_mediaId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Media ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+                            <div class="methodsubtabletitle">Body parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">partialMedia <span style="color:red;">*</span></td>
+<td>
+<p class="marked"></p>
+<script>
+$(document).ready(function() {
+  var schemaWrapper = {
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/partialMedia"
+      }
+    }
+  },
+  "required" : true
+};
+
+  var schema = findNode('schema',schemaWrapper).schema;
+  if (!schema) {
+    schema = schemaWrapper.schema;
+  }
+  if (schema.$ref != null) {
+    schema = defsParser.$refs.get(schema.$ref);
+  } else {
+    schemaWrapper.definitions = Object.assign({}, defs);
+    $RefParser.dereference(schemaWrapper).catch(function(err) {
+      console.log(err);
+    });
+  }
+
+  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
+  var result = $('#d2e199_editMediaInfo_partialMedia');
+  result.empty();
+  result.append(view.render());
+});
+</script>
+<div id="d2e199_editMediaInfo_partialMedia"></div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-editMediaInfo-title-200"></h3>
+                            <p id="examples-Default-editMediaInfo-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `OK`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-editMediaInfo-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-editMediaInfo-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-editMediaInfo-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-editMediaInfo-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-editMediaInfo-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-editMediaInfo-200-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-editMediaInfo-200-schema">
+                                  <div id="responses-Default-editMediaInfo-schema-200" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/Media"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-editMediaInfo-200-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-editMediaInfo-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-editMediaInfo-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                            <h3 id="examples-Default-editMediaInfo-title-400"></h3>
+                            <p id="examples-Default-editMediaInfo-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `Media ID not found`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-editMediaInfo-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-editMediaInfo-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-editMediaInfo-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-editMediaInfo-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-editMediaInfo-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-editMediaInfo-400-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-editMediaInfo-400-schema">
+                                  <div id="responses-Default-editMediaInfo-schema-400" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Media ID not found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/HTTPError"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-editMediaInfo-400-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-editMediaInfo-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-editMediaInfo-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-flushMedia">
+                      <article id="api-Default-flushMedia-0" data-group="User" data-name="flushMedia" data-version="0">
+                        <div class="pull-left">
+                          <h1>flushMedia</h1>
+                          <p>Flush Media Library</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/flush</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-flushMedia-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-flushMedia-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-flushMedia-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-flushMedia-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-flushMedia-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-flushMedia-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-flushMedia-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+ "http://localhost:5000/api/flush"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-flushMedia-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        
+        try {
+            apiInstance.flushMedia();
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#flushMedia");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-flushMedia-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        
+        try {
+            apiInstance.flushMedia();
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#flushMedia");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-flushMedia-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+
+// Flush Media Library
+[apiInstance flushMediaWithCompletionHandler: 
+              ^(NSError* error) {
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+};
+api.flushMedia(callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-flushMedia-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class flushMediaExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+
+            try {
+                // Flush Media Library
+                apiInstance.flushMedia();
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.flushMedia: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+
+try {
+    $api_instance->flushMedia();
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->flushMedia: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+
+eval { 
+    $api_instance->flushMedia();
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->flushMedia: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+
+try: 
+    # Flush Media Library
+    api_instance.flush_media()
+except ApiException as e:
+    print("Exception when calling DefaultApi->flushMedia: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-flushMedia-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.flushMedia(&context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-flushMedia-title-204"></h3>
+                            <p id="examples-Default-flushMedia-description-204" class="marked"></p>
+                            <script>
+                              var responseDefault204_description = `OK`;
+                              var responseDefault204_description_break = responseDefault204_description.indexOf('\n');
+                              if (responseDefault204_description_break == -1) {
+                                $("#examples-Default-flushMedia-title-204").text("Status: 204 - " + responseDefault204_description);
+                              } else {
+                                $("#examples-Default-flushMedia-title-204").text("Status: 204 - " + responseDefault204_description.substring(0, responseDefault204_description_break));
+                                $("#examples-Default-flushMedia-description-204").html(responseDefault204_description.substring(responseDefault204_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-flushMedia-204" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-flushMedia-204-wrapper" style='margin-bottom: 10px;'>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Default-getLibrary">
                       <article id="api-Default-getLibrary-0" data-group="User" data-name="getLibrary" data-version="0">
                         <div class="pull-left">
@@ -986,7 +1747,7 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         
         try {
-            Media result = apiInstance.getLibrary();
+            array[Media] result = apiInstance.getLibrary();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getLibrary");
@@ -1005,7 +1766,7 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         
         try {
-            Media result = apiInstance.getLibrary();
+            array[Media] result = apiInstance.getLibrary();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getLibrary");
@@ -1026,7 +1787,7 @@ DefaultApi *apiInstance = [[DefaultApi alloc] init];
 
 // Get Media Library
 [apiInstance getLibraryWithCompletionHandler: 
-              ^(Media output, NSError* error) {
+              ^(array[Media] output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
     }
@@ -1075,7 +1836,7 @@ namespace Example
 
             try {
                 // Get Media Library
-                Media result = apiInstance.getLibrary();
+                array[Media] result = apiInstance.getLibrary();
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.getLibrary: " + e.Message );
@@ -1167,7 +1928,7 @@ pub fn main() {
                             <h3 id="examples-Default-getLibrary-title-200"></h3>
                             <p id="examples-Default-getLibrary-description-200" class="marked"></p>
                             <script>
-                              var responseDefault200_description = `Success`;
+                              var responseDefault200_description = `OK`;
                               var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
                               if (responseDefault200_description_break == -1) {
                                 $("#examples-Default-getLibrary-title-200").text("Status: 200 - " + responseDefault200_description);
@@ -1195,11 +1956,15 @@ pub fn main() {
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "Success",
+  "description" : "OK",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Media"
+        "type" : "array",
+        "description" : "List of Media",
+        "items" : {
+          "$ref" : "#/components/schemas/Media"
+        }
       }
     }
   }
@@ -1228,6 +1993,1560 @@ pub fn main() {
                                     </script>
                                   </div>
                                   <input id='responses-Default-getLibrary-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-getMediaInfo">
+                      <article id="api-Default-getMediaInfo-0" data-group="User" data-name="getMediaInfo" data-version="0">
+                        <div class="pull-left">
+                          <h1>getMediaInfo</h1>
+                          <p>Get Media Information</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/media/{mediaId}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getMediaInfo-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaInfo-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaInfo-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getMediaInfo-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getMediaInfo-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+ -H "Accept: application/json"\
+ "http://localhost:5000/api/media/{mediaId}"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getMediaInfo-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            Media result = apiInstance.getMediaInfo(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaInfo");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getMediaInfo-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            Media result = apiInstance.getMediaInfo(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaInfo");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getMediaInfo-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *mediaId = 56; // Media ID (default to null)
+
+// Get Media Information
+[apiInstance getMediaInfoWith:mediaId
+              completionHandler: ^(Media output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var mediaId = 56; // {Integer} Media ID
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getMediaInfo(mediaId, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getMediaInfo-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getMediaInfoExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var mediaId = 56;  // Integer | Media ID (default to null)
+
+            try {
+                // Get Media Information
+                Media result = apiInstance.getMediaInfo(mediaId);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getMediaInfo: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$mediaId = 56; // Integer | Media ID
+
+try {
+    $result = $api_instance->getMediaInfo($mediaId);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getMediaInfo: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $mediaId = 56; # Integer | Media ID
+
+eval { 
+    my $result = $api_instance->getMediaInfo(mediaId => $mediaId);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getMediaInfo: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+mediaId = 56 # Integer | Media ID (default to null)
+
+try: 
+    # Get Media Information
+    api_response = api_instance.get_media_info(mediaId)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getMediaInfo: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaInfo-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let mediaId = 56; // Integer
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getMediaInfo(mediaId, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">mediaId*</td>
+<td>
+
+
+    <div id="d2e199_getMediaInfo_mediaId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Media ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getMediaInfo-title-200"></h3>
+                            <p id="examples-Default-getMediaInfo-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `OK`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getMediaInfo-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getMediaInfo-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getMediaInfo-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaInfo-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaInfo-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaInfo-200-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaInfo-200-schema">
+                                  <div id="responses-Default-getMediaInfo-schema-200" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/Media"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaInfo-200-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaInfo-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaInfo-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                            <h3 id="examples-Default-getMediaInfo-title-400"></h3>
+                            <p id="examples-Default-getMediaInfo-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `Media ID not found`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-getMediaInfo-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-getMediaInfo-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-getMediaInfo-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaInfo-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaInfo-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaInfo-400-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaInfo-400-schema">
+                                  <div id="responses-Default-getMediaInfo-schema-400" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Media ID not found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/HTTPError"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaInfo-400-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaInfo-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaInfo-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-getMediaThumbnail">
+                      <article id="api-Default-getMediaThumbnail-0" data-group="User" data-name="getMediaThumbnail" data-version="0">
+                        <div class="pull-left">
+                          <h1>getMediaThumbnail</h1>
+                          <p>Get Media Thumbnail</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/thumbnail/{mediaId}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getMediaThumbnail-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaThumbnail-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaThumbnail-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getMediaThumbnail-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getMediaThumbnail-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+ -H "Accept: image/jpeg,application/json"\
+ "http://localhost:5000/api/thumbnail/{mediaId}"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            File result = apiInstance.getMediaThumbnail(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaThumbnail");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            File result = apiInstance.getMediaThumbnail(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaThumbnail");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *mediaId = 56; // Media ID (default to null)
+
+// Get Media Thumbnail
+[apiInstance getMediaThumbnailWith:mediaId
+              completionHandler: ^(File output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var mediaId = 56; // {Integer} Media ID
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getMediaThumbnail(mediaId, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getMediaThumbnail-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getMediaThumbnailExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var mediaId = 56;  // Integer | Media ID (default to null)
+
+            try {
+                // Get Media Thumbnail
+                File result = apiInstance.getMediaThumbnail(mediaId);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getMediaThumbnail: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$mediaId = 56; // Integer | Media ID
+
+try {
+    $result = $api_instance->getMediaThumbnail($mediaId);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getMediaThumbnail: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $mediaId = 56; # Integer | Media ID
+
+eval { 
+    my $result = $api_instance->getMediaThumbnail(mediaId => $mediaId);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getMediaThumbnail: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+mediaId = 56 # Integer | Media ID (default to null)
+
+try: 
+    # Get Media Thumbnail
+    api_response = api_instance.get_media_thumbnail(mediaId)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getMediaThumbnail: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaThumbnail-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let mediaId = 56; // Integer
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getMediaThumbnail(mediaId, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">mediaId*</td>
+<td>
+
+
+    <div id="d2e199_getMediaThumbnail_mediaId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Media ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getMediaThumbnail-title-200"></h3>
+                            <p id="examples-Default-getMediaThumbnail-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `OK`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getMediaThumbnail-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getMediaThumbnail-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getMediaThumbnail-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaThumbnail-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaThumbnail-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaThumbnail-200-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaThumbnail-200-schema">
+                                  <div id="responses-Default-getMediaThumbnail-schema-200" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "image/jpeg" : {
+      "schema" : {
+        "type" : "string",
+        "format" : "binary"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaThumbnail-200-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaThumbnail-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaThumbnail-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                            <h3 id="examples-Default-getMediaThumbnail-title-400"></h3>
+                            <p id="examples-Default-getMediaThumbnail-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `Media ID not found`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-getMediaThumbnail-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-getMediaThumbnail-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-getMediaThumbnail-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaThumbnail-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaThumbnail-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaThumbnail-400-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaThumbnail-400-schema">
+                                  <div id="responses-Default-getMediaThumbnail-schema-400" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Media ID not found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/HTTPError"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaThumbnail-400-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaThumbnail-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaThumbnail-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-getMediaVisual">
+                      <article id="api-Default-getMediaVisual-0" data-group="User" data-name="getMediaVisual" data-version="0">
+                        <div class="pull-left">
+                          <h1>getMediaVisual</h1>
+                          <p>Get Media Visual</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/media/visual/{mediaId}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getMediaVisual-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaVisual-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getMediaVisual-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getMediaVisual-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getMediaVisual-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+ -H "Accept: image/jpeg,application/json"\
+ "http://localhost:5000/api/media/visual/{mediaId}"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getMediaVisual-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            File result = apiInstance.getMediaVisual(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaVisual");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getMediaVisual-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer mediaId = 56; // Integer | Media ID
+        
+        try {
+            File result = apiInstance.getMediaVisual(mediaId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getMediaVisual");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getMediaVisual-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *mediaId = 56; // Media ID (default to null)
+
+// Get Media Visual
+[apiInstance getMediaVisualWith:mediaId
+              completionHandler: ^(File output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var mediaId = 56; // {Integer} Media ID
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getMediaVisual(mediaId, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getMediaVisual-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getMediaVisualExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var mediaId = 56;  // Integer | Media ID (default to null)
+
+            try {
+                // Get Media Visual
+                File result = apiInstance.getMediaVisual(mediaId);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getMediaVisual: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$mediaId = 56; // Integer | Media ID
+
+try {
+    $result = $api_instance->getMediaVisual($mediaId);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getMediaVisual: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $mediaId = 56; # Integer | Media ID
+
+eval { 
+    my $result = $api_instance->getMediaVisual(mediaId => $mediaId);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getMediaVisual: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+mediaId = 56 # Integer | Media ID (default to null)
+
+try: 
+    # Get Media Visual
+    api_response = api_instance.get_media_visual(mediaId)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getMediaVisual: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getMediaVisual-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let mediaId = 56; // Integer
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getMediaVisual(mediaId, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">mediaId*</td>
+<td>
+
+
+    <div id="d2e199_getMediaVisual_mediaId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Media ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getMediaVisual-title-200"></h3>
+                            <p id="examples-Default-getMediaVisual-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `OK`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getMediaVisual-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getMediaVisual-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getMediaVisual-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaVisual-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaVisual-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaVisual-200-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaVisual-200-schema">
+                                  <div id="responses-Default-getMediaVisual-schema-200" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "image/jpeg" : {
+      "schema" : {
+        "type" : "string",
+        "format" : "binary"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaVisual-200-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaVisual-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaVisual-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                            <h3 id="examples-Default-getMediaVisual-title-400"></h3>
+                            <p id="examples-Default-getMediaVisual-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `Media ID not found`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-getMediaVisual-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-getMediaVisual-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-getMediaVisual-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getMediaVisual-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getMediaVisual-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getMediaVisual-400-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-getMediaVisual-400-schema">
+                                  <div id="responses-Default-getMediaVisual-schema-400" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Media ID not found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/HTTPError"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-getMediaVisual-400-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-getMediaVisual-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-getMediaVisual-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-uploadMedia">
+                      <article id="api-Default-uploadMedia-0" data-group="User" data-name="uploadMedia" data-version="0">
+                        <div class="pull-left">
+                          <h1>uploadMedia</h1>
+                          <p>Upload Media to Library</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/upload-media</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-uploadMedia-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-uploadMedia-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-uploadMedia-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-uploadMedia-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-uploadMedia-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-uploadMedia-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-uploadMedia-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
+ -H "Accept: application/json"\
+ -H "Content-Type: multipart/form-data"\
+ "http://localhost:5000/api/upload-media"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-uploadMedia-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        array[File] fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE; // array[File] | 
+        
+        try {
+            apiInstance.uploadMedia(fileLeft_Square_BracketRight_Square_Bracket);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#uploadMedia");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-uploadMedia-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        array[File] fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE; // array[File] | 
+        
+        try {
+            apiInstance.uploadMedia(fileLeft_Square_BracketRight_Square_Bracket);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#uploadMedia");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-uploadMedia-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+array[File] *fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE; //  (optional) (default to null)
+
+// Upload Media to Library
+[apiInstance uploadMediaWith:fileLeft_Square_BracketRight_Square_Bracket
+              completionHandler: ^(NSError* error) {
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var EverythingApi = require('everything_api');
+
+// Create an instance of the API class
+var api = new EverythingApi.DefaultApi()
+var opts = {
+  'fileLeft_Square_BracketRight_Square_Bracket': BINARY_DATA_HERE // {array[File]} 
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+};
+api.uploadMedia(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-uploadMedia-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class uploadMediaExample
+    {
+        public void main()
+        {
+            
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var fileLeft_Square_BracketRight_Square_Bracket = new array[File](); // array[File] |  (optional)  (default to null)
+
+            try {
+                // Upload Media to Library
+                apiInstance.uploadMedia(fileLeft_Square_BracketRight_Square_Bracket);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.uploadMedia: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE; // array[File] | 
+
+try {
+    $api_instance->uploadMedia($fileLeft_Square_BracketRight_Square_Bracket);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->uploadMedia: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $fileLeft_Square_BracketRight_Square_Bracket = [BINARY_DATA_HERE]; # array[File] | 
+
+eval { 
+    $api_instance->uploadMedia(fileLeft_Square_BracketRight_Square_Bracket => $fileLeft_Square_BracketRight_Square_Bracket);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->uploadMedia: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE # array[File] |  (optional) (default to null)
+
+try: 
+    # Upload Media to Library
+    api_instance.upload_media(fileLeft_Square_BracketRight_Square_Bracket=fileLeft_Square_BracketRight_Square_Bracket)
+except ApiException as e:
+    print("Exception when calling DefaultApi->uploadMedia: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-uploadMedia-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let fileLeft_Square_BracketRight_Square_Bracket = BINARY_DATA_HERE; // array[File]
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.uploadMedia(fileLeft_Square_BracketRight_Square_Bracket, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+
+
+                            <div class="methodsubtabletitle">Form parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">file[]</td>
+<td>
+
+
+    <div id="d2e199_uploadMedia_fileLeft_Square_BracketRight_Square_Bracket">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    array[File]
+                </span>
+                    <span class="format">
+                        (binary)
+                    </span>
+
+                    <div class="inner description marked">
+Media selected to upload
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-uploadMedia-title-400"></h3>
+                            <p id="examples-Default-uploadMedia-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `No Files Found`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-uploadMedia-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-uploadMedia-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-uploadMedia-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-uploadMedia-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-uploadMedia-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-uploadMedia-400-wrapper" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-Default-uploadMedia-400-schema">
+                                  <div id="responses-Default-uploadMedia-schema-400" class="exampleStyle">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "No Files Found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "type" : "boolean"
+      }
+    }
+  }
+};
+                                        var schema = findNode('schema',schemaWrapper).schema;
+                                        if (!schema) {
+                                          schema = schemaWrapper.schema;
+                                        }
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else if (schema.items != null && schema.items.$ref != null) {
+                                            schema.items = defsParser.$refs.get(schema.items.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-Default-uploadMedia-400-schema-data').val(JSON.stringify(schema));
+                                        var result = $('#responses-Default-uploadMedia-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-Default-uploadMedia-400-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
                         </article>

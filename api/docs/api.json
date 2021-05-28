@@ -17,7 +17,38 @@
 				"operationId": "getLibrary",
 				"responses": {
 					"200": {
-						"description": "Success",
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {"$ref": "#/components/schemas/Media"},
+									"description": "List of Media"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/media/{mediaId}": {
+			"get": {
+				"summary": "Get Media Information",
+				"operationId": "getMediaInfo",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mediaId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Media ID"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -25,6 +56,202 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Media ID not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/media/{mediaId}/edit": {
+			"patch": {
+				"summary": "Edit Media Information",
+				"operationId": "editMediaInfo",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mediaId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Media ID"
+					}
+				],
+				"requestBody": {
+					"description": "Partial Media",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "partialMedia",
+								"type": "object",
+								"properties": {
+									"date": {
+										"type": "string",
+										"format": "date",
+										"description": "UTC Date"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Media"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Media ID not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/thumbnail/{mediaId}": {
+			"get": {
+				"summary": "Get Media Thumbnail",
+				"operationId": "getMediaThumbnail",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mediaId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Media ID"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Media ID not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/media/visual/{mediaId}": {
+			"get": {
+				"summary": "Get Media Visual",
+				"operationId": "getMediaVisual",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mediaId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Media ID"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Media ID not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/upload-media": {
+			"post": {
+				"summary": "Upload Media to Library",
+				"operationId": "uploadMedia",
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file[]": {
+										"type": "array",
+										"description": "Media selected to upload",
+										"items": {
+											"type": "string",
+											"format": "binary"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"400": {
+						"description": "No Files Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/flush": {
+			"get": {
+				"summary": "Flush Media Library",
+				"operationId": "flushMedia",
+				"responses": {
+					"204": {
+						"description": "OK"
 					}
 				}
 			}
@@ -34,6 +261,7 @@
 		"schemas": {
 			"Media": {
 				"type": "object",
+				"description": "Media",
 				"properties": {
 					"id": {
 						"type": "integer",
@@ -75,6 +303,28 @@
 				"required": [
 					"id"
 				]
+			},
+			"HTTPError": {
+				"type": "object",
+				"description": "HTTP Error",
+				"properties": {
+					"detail": {
+						"type": "string",
+						"description": "A human-readable description of the specific error"
+					},
+					"type": {
+						"type": "string",
+						"description": "A URL to a document describing the error condition"
+					},
+					"title": {
+						"type": "string",
+						"description": "A short, human-readable title for the general error type"
+					},
+					"status": {
+						"type": "integer",
+						"description": "HTTP status code"
+					}
+				}
 			}
 		}
 	}
