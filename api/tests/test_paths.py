@@ -6,7 +6,7 @@ from src.paths import _generate_random_string, generate_random_media_filepath, g
 
 FAKE_ENVIROMENT = {'DATA_DIR': '/media/data', 'FRONTEND_URL': 'http://localhost:5000'}
 
-class TestScan(unittest.TestCase):
+class TestPaths(unittest.TestCase):
 	@mock.patch.dict(os.environ, FAKE_ENVIROMENT)
 	def setUp(self):
 		initialize_paths()
