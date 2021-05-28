@@ -1,9 +1,9 @@
 import logging
 import typing
 import os
-from db import Media
-from scan import is_image
-from paths import get_thumbnails_directory
+from src.db import Media
+from src.scan import is_image
+from src.paths import get_thumbnails_directory
 import subprocess
 
 THUMBNAIL_WIDTH = 96
