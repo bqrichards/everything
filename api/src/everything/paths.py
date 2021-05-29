@@ -2,7 +2,7 @@ import os
 import string
 import logging
 import random
-from src.errors import ERROR_DATA_DIRECTORY_NOT_SET, ERROR_FRONTEND_NOT_SET, exit_everything
+from everything.errors import ERROR_DATA_DIRECTORY_NOT_SET, ERROR_FRONTEND_NOT_SET, exit_everything
 
 _paths: 'dict[str, str]' = dict()
 

@@ -2,7 +2,7 @@ import unittest
 from tests import FakeMedia
 from datetime import datetime
 
-from src.media_io import _format_date_to_touch, _modify_date_unix_command
+from everything.media_io import _format_date_to_touch, _modify_date_unix_command
 
 
 class TestMediaIO(unittest.TestCase):

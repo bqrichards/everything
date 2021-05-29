@@ -1,6 +1,6 @@
 import logging
-from src.db import Media, ModificationRecord, session_scope
-from src.media_io import write_date_to_media
+from everything.db import Media, ModificationRecord, session_scope
+from everything.media_io import write_date_to_media
 
 
 def _write_media(media: Media) -> bool:

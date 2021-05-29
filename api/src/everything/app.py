@@ -1,12 +1,12 @@
-from src.services import get_library, get_single_media, scan_media_library, update_single_media, upload_new_media
-from src.paths import _FRONTEND_URL_ENV_KEY, initialize_paths, get_database_path
+from everything.services import get_library, get_single_media, scan_media_library, update_single_media, upload_new_media
+from everything.paths import _FRONTEND_URL_ENV_KEY, initialize_paths, get_database_path
 from flask import Flask, jsonify, send_file, request, redirect
-from src.thumbnail import get_thumbnail_path
-from src.db_actions import get_media_by_id
-from src.flush_media import flush_media
-from src.scan import mime_from_ext
-from src.db import initialize_db
-from src.models import HttpError
+from everything.thumbnail import get_thumbnail_path
+from everything.db_actions import get_media_by_id
+from everything.flush_media import flush_media
+from everything.scan import mime_from_ext
+from everything.db import initialize_db
+from everything.models import HttpError
 from flask_cors import CORS
 import logging
 import os

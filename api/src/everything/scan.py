@@ -2,8 +2,8 @@ import logging
 import os
 import typing
 from datetime import datetime
-from src.db import Media
-from src.paths import get_media_directory
+from everything.db import Media
+from everything.paths import get_media_directory
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 

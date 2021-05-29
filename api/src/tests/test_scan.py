@@ -1,7 +1,7 @@
 from datetime import datetime
 import unittest
 
-from src.scan import get_extension, is_image, is_media_file, mime_from_ext
+from everything.scan import get_extension, is_image, is_media_file, mime_from_ext
 
 class TestScan(unittest.TestCase):
 	def test_get_extension(self):

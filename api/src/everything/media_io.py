@@ -1,7 +1,7 @@
 from datetime import datetime
 import sys
 import subprocess
-from src.db import Media
+from everything.db import Media
 
 
 def _format_date_to_touch(datetime: datetime) -> str:

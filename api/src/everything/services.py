@@ -5,11 +5,11 @@ from dataclasses import dataclass
 from geoalchemy2.shape import to_shape
 from sqlalchemy.exc import IntegrityError
 from werkzeug.datastructures import FileStorage
-from src.db import Media, session_scope
-from src.db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
-from src.paths import generate_random_media_filepath
-from src.scan import get_extension, is_media_file, scan
-from src.thumbnail import generate_thumbnails
+from everything.db import Media, session_scope
+from everything.db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
+from everything.paths import generate_random_media_filepath
+from everything.scan import get_extension, is_media_file, scan
+from everything.thumbnail import generate_thumbnails
 import dateutil.parser
 import pytz
 

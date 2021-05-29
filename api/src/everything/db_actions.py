@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from src.db import Media, ModificationRecord, session_scope
+from everything.db import Media, ModificationRecord, session_scope
 from sqlalchemy.exc import IntegrityError
 
 
