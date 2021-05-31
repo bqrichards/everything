@@ -4,12 +4,14 @@ from typing import List, Optional, Union
 from dataclasses import dataclass
 from geoalchemy2.shape import to_shape
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.session import Session
 from werkzeug.datastructures import FileStorage
 from everything.db import Media, session_scope
 from everything.db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
 from everything.paths import generate_random_media_filepath
-from everything.scan import get_extension, is_media_file, scan
+from everything.media_io import get_extension, is_media_file
 from everything.thumbnail import generate_thumbnails
+from everything.scan import scan
 import dateutil.parser
 import pytz
 
@@ -131,11 +133,12 @@ def _scan_and_commit():
 	for media in scanned_media_items:
 		try:
 			with session_scope() as session:
+				session: Session
 				session.add(media)
 		except IntegrityError:
 			pass
 
-	all_media_items = []
+	all_media_items: list[Media] = []
 	with session_scope() as session:
 		items = session.query(Media).all()
 		session.expunge_all()

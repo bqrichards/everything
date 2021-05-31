@@ -42,11 +42,13 @@ class Media(Base):
 	filepath: str
 	date: datetime
 	location: WKBElement
+	fingerprint: str
 
 	id = Column(Integer, primary_key=True)
 	filepath = Column(Text, unique=True, nullable=False)
 	date = Column(DateTime)
 	location = Column(Geometry(geometry_type='POINT', management=True))
+	fingerprint = Column(Text)
 	modification_record = relationship(ModificationRecord)
 
 

@@ -3,41 +3,10 @@ import os
 import typing
 from datetime import datetime
 from everything.db import Media
+from everything.media_io import is_image, is_media_file
 from everything.paths import get_media_directory
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
-
-
-image_extensions = ['.jpg', '.png', '.jpeg']
-video_extensions = ['.mp4', '.mov']
-allowed_extensions = image_extensions + video_extensions
-
-
-def get_extension(filepath: str):
-	"""Returns the extension of a filepath
-	
-	Parameters:
-		filepath (str): The filepath to retreive the extension of
-	"""
-	_, ext = os.path.splitext(filepath)
-	return ext
-
-
-def mime_from_ext(filepath: str):
-	ext = get_extension(filepath)
-	return {
-		'.jpg': 'image/jpeg',
-		'.jpeg': 'image/jpeg',
-		'.png': 'image/png',
-		'.mp4': 'video/mp4',
-		'.mov': 'application/octet-stream'
-	}[ext.lower()]
-
-
-def is_image(filepath: str) -> bool:
-	"""Returns whether a filepath is an image"""
-	ext = get_extension(filepath)
-	return ext.lower() in image_extensions
 
 
 def _read_date(filepath: str) -> datetime:
@@ -60,7 +29,7 @@ def _read_location(filepath: str) -> typing.Optional[str]:
 	if not is_image(filepath):
 		return None
 
-	exif: 'dict[str, Any]' = Image.open(filepath)._getexif()
+	exif: 'dict[str, typing.Any]' = Image.open(filepath)._getexif()
 	# No EXIF tags
 	if exif is None:
 		return None
@@ -86,16 +55,6 @@ def _read_location(filepath: str) -> typing.Optional[str]:
 		return f'POINT({lat} {lon})'
 
 	return None
-
-
-def is_media_file(filepath: str) -> bool:
-	"""Returns whether this file can be stored as Media
-	
-	Parameters:
-		filepath (str): Full filepath of file
-	"""
-	ext = get_extension(filepath)
-	return ext.lower() in allowed_extensions
 
 
 def scan() -> typing.List[Media]:

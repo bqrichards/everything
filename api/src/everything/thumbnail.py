@@ -1,10 +1,10 @@
+from everything.db import Media
+from everything.media_io import is_image
+from everything.paths import get_thumbnails_directory
+import subprocess
 import logging
 import typing
 import os
-from everything.db import Media
-from everything.scan import is_image
-from everything.paths import get_thumbnails_directory
-import subprocess
 
 THUMBNAIL_WIDTH = 96
 
