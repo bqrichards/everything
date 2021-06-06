@@ -45,7 +45,7 @@ class Media(Base):
 	fingerprint: str
 
 	id = Column(Integer, primary_key=True)
-	filepath = Column(Text, unique=True, nullable=False)
+	filepath = Column(Text, unique=True, nullable=False, index=True)
 	date = Column(DateTime)
 	location = Column(Geometry(geometry_type='POINT', management=True))
 	fingerprint = Column(Text)

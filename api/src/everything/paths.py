@@ -67,7 +67,6 @@ def initialize_paths():
 	_try_make_dir(_paths[_THUMBNAILS_DIRECTORY_KEY])
 
 	_log_paths()
-	os.remove(get_database_path())
 
 
 def get_data_path():

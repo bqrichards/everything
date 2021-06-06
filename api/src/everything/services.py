@@ -8,8 +8,8 @@ from sqlalchemy.orm.session import Session
 from werkzeug.datastructures import FileStorage
 from everything.db import Media, session_scope
 from everything.db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
+from everything.media_io import get_extension, is_media_file, read_date, read_location, fingerprint_media
 from everything.paths import generate_random_media_filepath
-from everything.media_io import get_extension, is_media_file
 from everything.thumbnail import generate_thumbnails
 from everything.scan import scan
 import dateutil.parser
@@ -135,15 +135,19 @@ def _scan_and_commit():
 			with session_scope() as session:
 				session: Session
 				session.add(media)
-		except IntegrityError:
-			pass
+				session.commit()
+				media.date = read_date(media.filepath)
+				media.location = read_location(media.filepath)
+				media.fingerprint = fingerprint_media(media.filepath)
+		except IntegrityError as e:
+			logging.debug(f'error adding media:', exc_info=e)
 
 	all_media_items: list[Media] = []
 	with session_scope() as session:
 		items = session.query(Media).all()
 		session.expunge_all()
 		all_media_items = items
-	
+
 	generate_thumbnails(all_media_items)
 
 
