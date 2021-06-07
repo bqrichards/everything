@@ -4,7 +4,7 @@ from sqlalchemy.event.api import listen
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.orm.session import Session, sessionmaker
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql import select, func
 from contextlib import contextmanager
@@ -81,6 +81,7 @@ def initialize_db(db_connection_string):
 @contextmanager
 def session_scope():
 	session = _Session()
+	session: Session
 	try:
 		yield session
 		session.commit()

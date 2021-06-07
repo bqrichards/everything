@@ -868,6 +868,26 @@ ul.nav-tabs {
   },
   "description" : "HTTP Error"
 };
+    defs["inline_response_200"] = {
+  "type" : "object",
+  "properties" : {
+    "canFlush" : {
+      "type" : "boolean",
+      "description" : "Whether there is modified Media to flush"
+    },
+    "containsDuplicates" : {
+      "type" : "boolean",
+      "description" : "Whether there are duplicate Media"
+    },
+    "media" : {
+      "type" : "array",
+      "description" : "List of Media info",
+      "items" : {
+        "$ref" : "#/components/schemas/Media"
+      }
+    }
+  }
+};
     defs["Media"] = {
   "required" : [ "id" ],
   "type" : "object",
@@ -1747,7 +1767,7 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         
         try {
-            array[Media] result = apiInstance.getLibrary();
+            inline_response_200 result = apiInstance.getLibrary();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getLibrary");
@@ -1766,7 +1786,7 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         
         try {
-            array[Media] result = apiInstance.getLibrary();
+            inline_response_200 result = apiInstance.getLibrary();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getLibrary");
@@ -1787,7 +1807,7 @@ DefaultApi *apiInstance = [[DefaultApi alloc] init];
 
 // Get Media Library
 [apiInstance getLibraryWithCompletionHandler: 
-              ^(array[Media] output, NSError* error) {
+              ^(inline_response_200 output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
     }
@@ -1836,7 +1856,7 @@ namespace Example
 
             try {
                 // Get Media Library
-                array[Media] result = apiInstance.getLibrary();
+                inline_response_200 result = apiInstance.getLibrary();
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.getLibrary: " + e.Message );
@@ -1960,11 +1980,7 @@ pub fn main() {
   "content" : {
     "application/json" : {
       "schema" : {
-        "type" : "array",
-        "description" : "List of Media",
-        "items" : {
-          "$ref" : "#/components/schemas/Media"
-        }
+        "$ref" : "#/components/schemas/inline_response_200"
       }
     }
   }
