@@ -1,34 +1,15 @@
-from services import get_library, get_single_media, scan_media_library, update_single_media, upload_new_media
-from paths import _FRONTEND_URL_ENV_KEY, initialize_paths, get_database_path
-from flask import Flask, jsonify, send_file, request, redirect
-from thumbnail import get_thumbnail_path
-from db_actions import get_media_by_id
-from flush_media import flush_media
-from scan import mime_from_ext
-from db import initialize_db
-from models import HttpError
-from flask_cors import CORS
-import logging
 import os
-
-
-logging.getLogger().setLevel(logging.DEBUG)
-
-
-initialize_paths()
-
-
-database_uri = f'sqlite:///{get_database_path()}'
-logging.info(f'Using database uri {database_uri}')
-
-
-app = Flask(__name__)
-CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-
-
-initialize_db(database_uri)
+import logging
+from everything import app
+from everything.paths import _FRONTEND_URL_ENV_KEY
+from everything.services import get_library, upload_new_media
+from flask import request, send_file, jsonify, redirect
+from everything.services import get_single_media, update_single_media
+from everything.thumbnail import get_thumbnail_path
+from everything.db_actions import get_media_by_id
+from everything.flush_media import flush_media
+from everything.media_io import mime_from_ext
+from everything.models import HttpError
 
 
 def make_http_error(title: str, detail: str, status: int):
@@ -39,6 +20,7 @@ def make_http_error(title: str, detail: str, status: int):
 def flush():
 	flush_media()
 	return '', 204
+
 
 @app.route('/api/thumbnail/<media_id>')
 def get_thumbnail(media_id):
@@ -90,6 +72,3 @@ def upload_media():
 		return redirect(os.getenv(_FRONTEND_URL_ENV_KEY))
 	else:
 		return jsonify(False, 400)
-
-
-scan_media_library()

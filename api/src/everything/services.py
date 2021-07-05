@@ -4,12 +4,14 @@ from typing import List, Optional, Union
 from dataclasses import dataclass
 from geoalchemy2.shape import to_shape
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.session import Session
 from werkzeug.datastructures import FileStorage
-from db import Media, session_scope
-from db_actions import get_all_media, get_media_by_id, mark_media_modified, unflushed_changes
-from paths import generate_random_media_filepath
-from scan import get_extension, is_media_file, scan
-from thumbnail import generate_thumbnails
+from everything.db import Media, session_scope
+from everything.db_actions import get_all_media, get_duplicates_exist, get_media_by_id, mark_media_modified, unflushed_changes
+from everything.media_io import get_extension, is_media_file, read_date, read_location, fingerprint_media
+from everything.paths import generate_random_media_filepath
+from everything.thumbnail import generate_thumbnails
+from everything.scan import scan
 import dateutil.parser
 import pytz
 
@@ -44,13 +46,17 @@ class Library:
 	"""Whether there is modified Media to flush"""
 	canFlush: bool
 
+	"""Whether there are duplicate Media"""
+	containsDuplicates: bool
+
 
 def get_library() -> Library:
 	"""Fetches the Library"""
 	all_media = get_all_media()
 	encoded_media = _encode_media(all_media)
 	can_flush = unflushed_changes()
-	return Library(media=encoded_media, canFlush=can_flush)
+	contains_duplicates = get_duplicates_exist()
+	return Library(media=encoded_media, canFlush=can_flush, containsDuplicates=contains_duplicates)
 
 
 def get_single_media(media_id: int) -> Optional[Media]:
@@ -132,15 +138,19 @@ def _scan_and_commit():
 		try:
 			with session_scope() as session:
 				session.add(media)
-		except IntegrityError:
+				session.commit()
+				media.date = read_date(media.filepath)
+				media.location = read_location(media.filepath)
+				media.fingerprint = fingerprint_media(media.filepath)
+		except IntegrityError as e:
 			pass
 
-	all_media_items = []
+	all_media_items: list[Media] = []
 	with session_scope() as session:
 		items = session.query(Media).all()
 		session.expunge_all()
 		all_media_items = items
-	
+
 	generate_thumbnails(all_media_items)
 
 

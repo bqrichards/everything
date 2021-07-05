@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest import mock
 from tests import FakeMedia
-from src.thumbnail import _generate_thumbail_image_command, _generate_thumbnail_video_command, get_thumbnail_path
-from src.paths import initialize_paths
+from everything.thumbnail import _generate_thumbail_image_command, _generate_thumbnail_video_command, get_thumbnail_path
+from everything.paths import initialize_paths
 from tests.test_paths import FAKE_ENVIROMENT
 
 class TestThumbnail(unittest.TestCase):

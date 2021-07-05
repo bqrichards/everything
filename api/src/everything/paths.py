@@ -2,7 +2,7 @@ import os
 import string
 import logging
 import random
-from src.errors import ERROR_DATA_DIRECTORY_NOT_SET, ERROR_FRONTEND_NOT_SET, exit_everything
+from everything.errors import ERROR_DATA_DIRECTORY_NOT_SET, ERROR_FRONTEND_NOT_SET, exit_everything
 
 _paths: 'dict[str, str]' = dict()
 
@@ -39,9 +39,17 @@ def _try_make_dir(path: str):
 		os.makedirs(path)
 		logging.info(f'Created directory {path}')
 	except FileExistsError:
-		logging.debug(f'Directory {path} existed')
+		logging.info(f'Directory {path} existed')
 	except OSError as e:
 		logging.error(f'Error while making directory {path}', exc_info=e)
+
+
+def _log_paths():
+	logging.info('Paths:')
+	logging.info(f'Data Directory: {_paths[_DATA_DIRECTORY_KEY]}')
+	logging.info(f'Database File: {_paths[_DATABASE_PATH_KEY]}')
+	logging.info(f'Media Directory: {_paths[_MEDIA_DIRECTORY_KEY]}')
+	logging.info(f'Thumbnails Directory: {_paths[_THUMBNAILS_DIRECTORY_KEY]}')
 
 
 def initialize_paths():
@@ -57,6 +65,8 @@ def initialize_paths():
 	# Create directories
 	_try_make_dir(_paths[_MEDIA_DIRECTORY_KEY])
 	_try_make_dir(_paths[_THUMBNAILS_DIRECTORY_KEY])
+
+	_log_paths()
 
 
 def get_data_path():
@@ -87,4 +97,3 @@ def generate_random_media_filepath(extension: str):
 	"""
 	filename = f'{_generate_random_string(30)}{extension}'
 	return os.path.join(get_media_directory(), filename)
-

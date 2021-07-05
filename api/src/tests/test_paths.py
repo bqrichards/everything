@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import mock
 
-from src.paths import _generate_random_string, generate_random_media_filepath, get_data_path, get_database_path, get_media_directory, get_thumbnails_directory, initialize_paths
+from everything.paths import _generate_random_string, generate_random_media_filepath, get_data_path, get_database_path, get_media_directory, get_thumbnails_directory, initialize_paths
 
 FAKE_ENVIROMENT = {'DATA_DIR': '/media/data', 'FRONTEND_URL': 'http://localhost:5000'}
 

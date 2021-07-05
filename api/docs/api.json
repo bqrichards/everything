@@ -21,9 +21,22 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {"$ref": "#/components/schemas/Media"},
-									"description": "List of Media"
+									"type": "object",
+									"properties": {
+										"canFlush": {
+											"type": "boolean",
+											"description": "Whether there is modified Media to flush"
+										},
+										"containsDuplicates": {
+											"type": "boolean",
+											"description": "Whether there are duplicate Media"
+										},
+										"media": {
+											"type": "array",
+											"items": {"$ref": "#/components/schemas/Media"},
+											"description": "List of Media info"
+										}
+									}
 								}
 							}
 						}

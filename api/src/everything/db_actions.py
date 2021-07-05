@@ -1,7 +1,16 @@
 import logging
 from typing import List
-from db import Media, ModificationRecord, session_scope
+from sqlalchemy.sql.functions import func
+from everything.db import Media, ModificationRecord, session_scope
 from sqlalchemy.exc import IntegrityError
+
+
+def get_duplicates_exist():
+	"""Returns whether any duplicate media exists in the database"""
+	with session_scope() as session:
+		media_count = session.query(func.count(Media.id))
+		unique_fingerprint_count = session.query(func.count(func.distinct(Media.fingerprint)))
+		return media_count != unique_fingerprint_count
 
 
 def mark_media_modified(media_id: int):
